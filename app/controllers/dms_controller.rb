@@ -1,0 +1,2 @@
+class DmsController < ApplicationController
+end

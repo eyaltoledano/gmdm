@@ -10,9 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_27_203434) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_27_205815) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "collections", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "contract_address", null: false
+    t.string "logo_url"
+    t.string "card_image_url"
+    t.string "featured_image_url"
+    t.boolean "active", default: false
+    t.boolean "upgraded", default: false
+    t.string "manager_address", limit: 42, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
 
   create_table "dms", force: :cascade do |t|
     t.bigint "nft_id", null: false
@@ -25,38 +38,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_203434) do
 
   create_table "messages", force: :cascade do |t|
     t.bigint "dm_id", null: false
-    t.bigint "sender_nft_id", null: false
+    t.bigint "sender_id", null: false
     t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["dm_id"], name: "index_messages_on_dm_id"
-    t.index ["sender_nft_id"], name: "index_messages_on_sender_nft_id"
-  end
-
-  create_table "nft_collections", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "contract_address", null: false
-    t.string "logo_url"
-    t.string "card_image_url"
-    t.string "featured_image_url"
-    t.boolean "active", default: false
-    t.boolean "upgraded", default: false
-    t.string "manager_address", limit: 42, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["contract_address"], name: "index_nft_collections_on_contract_address", unique: true
-    t.index ["name"], name: "index_nft_collections_on_name", unique: true
+    t.index ["sender_id"], name: "index_messages_on_sender_id"
   end
 
   create_table "nfts", force: :cascade do |t|
+    t.bigint "user_id"
     t.string "contract_address"
     t.string "token_id"
     t.string "metadata_url"
     t.string "collection_name"
-    t.string "owner_wallet"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "user_id"
     t.index ["user_id"], name: "index_nfts_on_user_id"
   end
 
@@ -72,6 +69,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_203434) do
 
   add_foreign_key "dms", "nfts"
   add_foreign_key "messages", "dms"
-  add_foreign_key "messages", "nfts", column: "sender_nft_id"
+  add_foreign_key "messages", "nfts", column: "sender_id"
   add_foreign_key "nfts", "users"
 end

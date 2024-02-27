@@ -1,2 +1,0 @@
-class NftCollection < ApplicationRecord
-end

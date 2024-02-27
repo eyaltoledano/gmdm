@@ -9,5 +9,5 @@ class CreateUsers < ActiveRecord::Migration[7.0]
       t.timestamps
     end
     add_index :users, 'lower(eth_address)', unique: true, name: 'index_users_on_lower_eth_address'
-  end
+  end  
 end
