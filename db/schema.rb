@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_27_195943) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_27_203434) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,6 +31,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_195943) do
     t.datetime "updated_at", null: false
     t.index ["dm_id"], name: "index_messages_on_dm_id"
     t.index ["sender_nft_id"], name: "index_messages_on_sender_nft_id"
+  end
+
+  create_table "nft_collections", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "contract_address", null: false
+    t.string "logo_url"
+    t.string "card_image_url"
+    t.string "featured_image_url"
+    t.boolean "active", default: false
+    t.boolean "upgraded", default: false
+    t.string "manager_address", limit: 42, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["contract_address"], name: "index_nft_collections_on_contract_address", unique: true
+    t.index ["name"], name: "index_nft_collections_on_name", unique: true
   end
 
   create_table "nfts", force: :cascade do |t|
