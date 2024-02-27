@@ -9,8 +9,10 @@ class CreateCollections < ActiveRecord::Migration[7.0]
       t.boolean :active, default: false
       t.boolean :upgraded, default: false
       t.string :manager_address, limit: 42, null: false
+      t.string :slug, null: false
 
       t.timestamps
     end
+    add_index :collections, :slug, unique: true
   end
 end

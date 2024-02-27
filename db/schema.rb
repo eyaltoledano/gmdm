@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_27_205815) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_27_205438) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,8 +23,10 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_205815) do
     t.boolean "active", default: false
     t.boolean "upgraded", default: false
     t.string "manager_address", limit: 42, null: false
+    t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["slug"], name: "index_collections_on_slug", unique: true
   end
 
   create_table "dms", force: :cascade do |t|
@@ -48,12 +50,13 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_205815) do
 
   create_table "nfts", force: :cascade do |t|
     t.bigint "user_id"
+    t.bigint "collection_id", null: false
     t.string "contract_address"
     t.string "token_id"
     t.string "metadata_url"
-    t.string "collection_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["collection_id"], name: "index_nfts_on_collection_id"
     t.index ["user_id"], name: "index_nfts_on_user_id"
   end
 
@@ -70,5 +73,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_205815) do
   add_foreign_key "dms", "nfts"
   add_foreign_key "messages", "dms"
   add_foreign_key "messages", "nfts", column: "sender_id"
+  add_foreign_key "nfts", "collections"
   add_foreign_key "nfts", "users"
 end
