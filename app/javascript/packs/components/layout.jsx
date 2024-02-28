@@ -1,7 +1,9 @@
 
 import React from 'react'
+import { useAppContext } from '../services/context'
 
 function Layout(props) {
+  const { state, dispatch } = useAppContext();
   return (
     <html>
       <header>
@@ -20,8 +22,8 @@ function Layout(props) {
                   </ul>
                 </div>
                 <div className="flex items-center">
-                  {/* rainbowkit wallet connect */}
-                  
+                  <a>Wallet connected: {state.walletConnected.toString()}</a>
+                  <a href="/signup" className="ml-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg py-2 px-4">Connect wallet</a>
                 </div>
               </div>
             </div>
@@ -32,7 +34,7 @@ function Layout(props) {
       <footer>
         <div className="container mx-auto px-4">
           <div className="py-12 text-center text-gray-400 text-sm">
-            <p>© 2024 gmdm. built with love by sh0</p>
+            <p>© 2024 gmdm</p>
           </div>
         </div>
       </footer>
