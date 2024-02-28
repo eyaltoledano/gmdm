@@ -1,18 +1,30 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [
-    './public/*.html',
+    './public/**/*.{html,js}',
     './app/helpers/**/*.rb',
-    './app/javascript/**/*.js',
-    './app/views/**/*',
+    './app/javascript/**/*.{js,jsx,ts,tsx}',
+    './app/views/**/*.{erb,html}',
   ],
-  darkMode: false, // or 'media' or 'class'
   theme: {
     extend: {},
   },
   variants: {
     extend: {},
   },
-  plugins: [],
+  plugins: [
+    require("daisyui")
+  ],
+  daisyui: {
+    themes: [
+      'light',
+      'dark',
+      'cupcake',
+      'bumblebee',
+      'emerald',
+      'corporate',
+      'synthwave',
+    ]
+  }
 }
 

@@ -1,6 +1,7 @@
 
 import React from 'react'
 import { useAppContext } from '../services/context'
+import Navbar from './navbar';
 
 function Layout(props) {
   const { state, dispatch } = useAppContext();
@@ -12,22 +13,7 @@ function Layout(props) {
       </header>
       <main>
         <div id='main'>
-          <div className="border-b border-gray-200 bg-white">
-            <div className="container mx-auto px-4">
-              <div className="flex items-center justify-between py-4">
-                <div className="flex items-center">
-                  <a href="/" className="text-lg font-semibold text-gray-900">gmdm</a>
-                  <ul className="flex ml-8 space-x-8">
-                    <li><a href="/messages" className="text-gray-600 hover:text-gray-900">Inbox</a></li>
-                  </ul>
-                </div>
-                <div className="flex items-center">
-                  <a>Wallet connected: {state.walletConnected.toString()}</a>
-                  <a href="/signup" className="ml-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg py-2 px-4">Connect wallet</a>
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* <Navbar /> */}
           {props.children}
         </div>
       </main>
