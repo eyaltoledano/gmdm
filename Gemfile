@@ -18,6 +18,7 @@ gem "bootsnap", require: false
 
 gem "rack-cors"
 gem "react-rails"
+gem 'webpacker'
 gem "rails-env"
 gem 'jsbundling-rails'
 gem 'active_model_serializers'

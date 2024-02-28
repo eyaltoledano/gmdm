@@ -1,0 +1,13 @@
+<!-- app/views/layouts/application.html.erb -->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>gmdm</title>
+        <%= csrf_meta_tags %>
+        <%= csp_meta_tag %>
+    </head>
+    <body>
+        <%= yield %>
+        <%= javascript_pack_tag 'application' %>
+    </body>
+</html>
