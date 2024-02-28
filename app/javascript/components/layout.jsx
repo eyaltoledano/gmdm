@@ -5,7 +5,7 @@ import { useAppContext } from '../services/context'
 function Layout(props) {
   const { state, dispatch } = useAppContext();
   return (
-    <html>
+    <>
       <header>
         <title>gmdm</title>
         <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap" />
@@ -38,7 +38,7 @@ function Layout(props) {
           </div>
         </div>
       </footer>
-    </html>
+    </>
   )
 }
 
