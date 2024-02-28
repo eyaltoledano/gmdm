@@ -25,7 +25,8 @@ module.exports = function(api) {
           },
           modules: 'commonjs'
         },
-        '@babel/preset-react'
+        '@babel/preset-react',
+        "@babel/preset-typescript"
       ],
       (isProductionEnv || isDevelopmentEnv) && [
         '@babel/preset-env',

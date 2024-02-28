@@ -18,7 +18,6 @@ gem "bootsnap", require: false
 
 gem "rack-cors"
 gem "react-rails"
-gem 'webpacker'
 gem "rails-env"
 gem 'jsbundling-rails'
 gem 'active_model_serializers'
@@ -33,4 +32,3 @@ group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
