@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_27_205438) do
+ActiveRecord::Schema[7.0].define(version: 2024_02_28_062559) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,7 +51,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_27_205438) do
   create_table "nfts", force: :cascade do |t|
     t.bigint "user_id"
     t.bigint "collection_id", null: false
-    t.string "contract_address"
     t.string "token_id"
     t.string "metadata_url"
     t.datetime "created_at", null: false
