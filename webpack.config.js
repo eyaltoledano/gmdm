@@ -2,8 +2,8 @@ const path    = require("path")
 const webpack = require("webpack")
 
 module.exports = {
-  mode: "development",
-  // mode: "production",
+  // mode: "development",
+  mode: "production",
   cache: {
     type: 'filesystem', // Use filesystem caching
     buildDependencies: {
@@ -28,15 +28,42 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(js|jsx|ts|tsx|)$/,
+        test: /\.(js|jsx|ts|tsx)$/,
         exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react', "@babel/preset-typescript"],
-            cacheDirectory: true, // Enable caching for Babel loader
+        use: [
+          {
+            loader: 'thread-loader', // Run babel on a separate thread pool of workers to improve build speeds
+            options: {
+              // Specify the number of workers
+              workers: 2, // Adjust this number based on your CPU cores and build requirements
+
+              // Worker parallel jobs limit
+              workerParallelJobs: 50,
+              
+              // Additional node.js arguments
+              workerNodeArgs: ['--max-old-space-size=1024'],
+              
+              // Allow to respawn a dead worker pool
+              poolRespawn: false,
+              
+              // Idle timeout for killing the worker processes
+              poolTimeout: 2000, // Use 'Infinity' in watch mode to keep workers alive
+              
+              // Number of jobs a worker processes in parallel
+              poolParallelJobs: 50,
+              
+              // Name of the pool
+              name: "gmdm-pool"
+            }
+          },
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: ['@babel/preset-env', '@babel/preset-react', "@babel/preset-typescript"],
+              cacheDirectory: true, // Caches the output of the babel-loader
+            }
           }
-        }
+        ]
       },
       // {
       //   test: /\.css$/i,
