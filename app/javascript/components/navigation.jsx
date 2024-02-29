@@ -1,7 +1,9 @@
+
 import React, { useState, useEffect } from 'react'
 import { Button, Navbar, Dropdown, Menu,  } from 'react-daisyui'
 import Api from '../services/api'
 import { Link } from 'react-router-dom';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 const Navigation = () => {
     const [collections, setCollections] = useState([]);
@@ -37,7 +39,7 @@ const Navigation = () => {
                 <li><Link to={'/settings'}>Settings</Link></li>
               </Dropdown.Menu>
             </Dropdown>
-            <Link to={'/'} className='btn btn-ghost normal-case text-xl'>gmdm</Link>
+            <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
           </Navbar.Start>
           <Navbar.Center className="hidden lg:flex">
             <Menu horizontal className="px-1 container gap-x-1">
@@ -60,13 +62,11 @@ const Navigation = () => {
           </Navbar.Center>
           <Navbar.End>
             <Menu horizontal className="px-2 flex items-center gap-x-2">
-              <li>
+              <li className='hidden lg:flex'>
                 <Link as='Menu.Item' to={'/settings'}>Settings</Link>
               </li>
-              <Menu.Item as='div'>
-                <Button>Connect wallet</Button>
-              </Menu.Item>
             </Menu>
+            <ConnectButton />
           </Navbar.End>
         </Navbar>
       </div>
