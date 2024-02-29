@@ -1,3 +1,3 @@
 class CollectionSerializer < ActiveModel::Serializer
-  attributes :id, :name, :contract_address, :active
+  attributes :id, :name, :contract_address, :active, :slug
 end

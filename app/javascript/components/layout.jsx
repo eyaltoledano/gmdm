@@ -1,7 +1,7 @@
 
 import React from 'react'
 import { useAppContext } from '../services/context'
-import Navbar from './navbar';
+import Navigation from './navigation';
 
 function Layout(props) {
   const { state, dispatch } = useAppContext();
@@ -13,7 +13,7 @@ function Layout(props) {
       </header>
       <main>
         <div id='main'>
-          {/* <Navbar /> */}
+          <Navigation />
           {props.children}
         </div>
       </main>

@@ -4,6 +4,12 @@ const webpack = require("webpack")
 module.exports = {
   mode: "development",
   // mode: "production",
+  cache: {
+    type: 'filesystem', // Use filesystem caching
+    buildDependencies: {
+      config: [__filename] // Invalidate cache when configuration changes
+    }
+  },
   devtool: "source-map",
   entry: {
     application: "./app/javascript/application.js"
@@ -28,6 +34,7 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             presets: ['@babel/preset-env', '@babel/preset-react', "@babel/preset-typescript"],
+            cacheDirectory: true, // Enable caching for Babel loader
           }
         }
       },

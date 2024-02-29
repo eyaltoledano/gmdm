@@ -5,6 +5,8 @@ module.exports = {
     './app/helpers/**/*.rb',
     './app/javascript/**/*.{js,jsx,ts,tsx}',
     './app/views/**/*.{erb,html}',
+    './app/node_modules/daisyui/dist/**/*.js',
+    './app/node_modules/react-daisyui/dist/**/*.js',
   ],
   theme: {
     extend: {},
