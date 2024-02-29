@@ -34,6 +34,13 @@ const config = getDefaultConfig({
 
 const queryClient = new QueryClient();
 
+const Disclaimer = ({ Text }) => (
+  <Text>
+    Please connect your wallet to direct message as your NFTs.
+    You will be required to Sign in with Ethereum to prove wallet ownership. 
+  </Text>
+);
+
 
 const App = () => {
   const [isLoading, setIsLoading] = useState(true);
@@ -46,7 +53,11 @@ const App = () => {
     <Router>
       <WagmiProvider config={config}>
         <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider>
+          <RainbowKitProvider coolMode appInfo={{
+              appName: 'gmdm',
+              learnMoreUrl: 'https://gmdm.app',
+              disclaimer: Disclaimer
+            }}>
             <AppProvider>
               {isLoading && <Loading variant='ball' size='lg' />}
               {!isLoading && (

@@ -1,3 +1,6 @@
+# == Route Map
+#
+
 Rails.application.routes.draw do
   # API Routes
   namespace :api do
@@ -10,6 +13,10 @@ Rails.application.routes.draw do
       resources :messages, only: [:index, :create, :show, :update, :destroy]
     end
   end
+
+  # SIWE Routes
+  get '/nonce', to: 'siwe#nonce'
+  post '/verify', to: 'siwe#verify'
 
   # Catchall route for React Router
   # This sends non-API requests to your React app, allowing React Router to handle routing

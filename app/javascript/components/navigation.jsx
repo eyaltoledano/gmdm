@@ -4,9 +4,11 @@ import { Button, Navbar, Dropdown, Menu,  } from 'react-daisyui'
 import Api from '../services/api'
 import { Link } from 'react-router-dom';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useAccountEffect, useAccount } from 'wagmi';
 
 const Navigation = () => {
     const [collections, setCollections] = useState([]);
+    const { address, isConnected } = useAccount();
 
     useEffect(() => {
       Api.get('/api/v1/collections')
@@ -14,34 +16,56 @@ const Navigation = () => {
         .catch(error => console.error('Error fetching collections:', error));
     }, []);
 
+    useAccountEffect({
+      onConnect(data) {
+        console.log('Connected!', data);
+        // Dispatch action to update global state indicating user is authenticated
+        // Update global state with user data if needed
+      },
+      onDisconnect() {
+        console.log('Disconnected!');
+        // Dispatch action to update global state indicating user is logged out
+        // Clear user data from global state if needed
+      },
+    });
+
     return (
       <div className='container flex mx-auto'>
         <Navbar>
           <Navbar.Start>
-            <Dropdown>
-              <Button tag="label" color="ghost" tabIndex={0} className="lg:hidden">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
-                </svg>
-              </Button>
-              <Dropdown.Menu tabIndex={0} className="w-52 menu-sm mt-3 z-[1]"  as='div'>
-                <li>
-                  <a>Collections</a>
-                  <ul className="p-2">
-                    {collections?.map((collection) => (
-                      <li key={collection.slug}>
-                        <Link to={`/collections/${collection.slug}`}>{collection.name}</Link>
-                      </li>
-                    ))}
-                  </ul>
-                </li>
-                <li><Link to={'/inbox'}>Inbox</Link></li>
-                <li><Link to={'/settings'}>Settings</Link></li>
-              </Dropdown.Menu>
-            </Dropdown>
+          { isConnected && (
+              <Dropdown>
+                <Button tag="label" color="ghost" tabIndex={0} className="lg:hidden">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h8m-8 6h16" />
+                  </svg>
+                </Button>
+                <Dropdown.Menu tabIndex={0} className="w-52 menu-sm mt-3 z-[1]"  as='div'>
+                  {/* <li>
+                    <a>Collections</a>
+                    <ul className="p-2">
+                      {collections?.map((collection) => (
+                        <li key={collection.slug}>
+                          <Link to={`/collections/${collection.slug}`}>{collection.name}</Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </li> */}
+                      <li><Link to={'/inbox'}>Inbox</Link></li>
+                      <li><Link to={'/settings'}>Settings</Link></li>
+                </Dropdown.Menu>
+              </Dropdown>
+            )}
             <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
+            { isConnected && (
+              <Menu horizontal className="px-2 flex items-center gap-x-2">
+                <li className='hidden lg:flex'>
+                  <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
+                </li>
+              </Menu>
+            )}
           </Navbar.Start>
-          <Navbar.Center className="hidden lg:flex">
+          {/* <Navbar.Center className="hidden lg:flex">
             <Menu horizontal className="px-1 container gap-x-1">
               <Menu.Item as='div'>
                 <details>
@@ -55,17 +79,16 @@ const Navigation = () => {
                   </ul>
                 </details>
               </Menu.Item>
-              <li>
-                <Link to={'/inbox'}>Inbox</Link>
-              </li>
             </Menu>
-          </Navbar.Center>
+          </Navbar.Center> */}
           <Navbar.End>
-            <Menu horizontal className="px-2 flex items-center gap-x-2">
-              <li className='hidden lg:flex'>
-                <Link as='Menu.Item' to={'/settings'}>Settings</Link>
-              </li>
-            </Menu>
+            { isConnected && (
+              <Menu horizontal className="px-2 flex items-center gap-x-2">
+                <li className='hidden lg:flex'>
+                  <Link as='Menu.Item' to={'/settings'}>Settings</Link>
+                </li>
+              </Menu>
+            )}
             <ConnectButton 
               chainStatus={{
                 smallScreen: 'avatar',

@@ -1,3 +1,15 @@
+# == Schema Information
+#
+# Table name: users
+#
+#  id          :bigint           not null, primary key
+#  eth_address :string
+#  last_seen   :datetime
+#  email       :string
+#  username    :string
+#  created_at  :datetime         not null
+#  updated_at  :datetime         not null
+#
 class User < ApplicationRecord
     has_many :nfts
     before_validation :downcase_eth_address

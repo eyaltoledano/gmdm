@@ -21,7 +21,12 @@ gem "react-rails"
 gem "rails-env"
 gem 'jsbundling-rails'
 gem 'active_model_serializers'
-gem 'rails-erd', group: :development
+
+group :development do
+  gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
+  gem 'rails-erd', group: :development
+  gem 'pry-rails', group: :development
+end
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

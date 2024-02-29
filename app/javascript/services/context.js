@@ -2,10 +2,9 @@ import React, { createContext, useReducer, useContext } from 'react';
 
 // Initial state
 const initialState = {
+  isConnected: false,
   isAuthenticated: false,
   user: null,
-  walletConnected: false,
-  test: 'test working'
   // Add more state variables as needed
 };
 
@@ -30,12 +29,12 @@ const reducer = (state, action) => {
     case 'CONNECT_WALLET':
       return {
         ...state,
-        walletConnected: true,
+        isConnected: true,
       };
     case 'DISCONNECT_WALLET':
       return {
         ...state,
-        walletConnected: false,
+        isConnected: false,
       };
     // Add more cases for other actions
     default:

@@ -1,4 +1,4 @@
-
+- fix the dropdown menu on the navbar so that clicking out of it closes it
 - siwe authentication
 - find or create user and send to global state
 - manage wallet state changes
