@@ -66,7 +66,16 @@ const Navigation = () => {
                 <Link as='Menu.Item' to={'/settings'}>Settings</Link>
               </li>
             </Menu>
-            <ConnectButton />
+            <ConnectButton 
+              chainStatus={{
+                smallScreen: 'avatar',
+                largeScreen: 'full',
+              }}
+              showBalance={{
+                smallScreen: false,
+                largeScreen: true,
+              }}
+            />
           </Navbar.End>
         </Navbar>
       </div>
