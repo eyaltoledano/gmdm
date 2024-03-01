@@ -20,12 +20,7 @@ module.exports = {
   daisyui: {
     themes: [
       'light',
-      'dark',
-      'cupcake',
-      'bumblebee',
-      'emerald',
-      'corporate',
-      'synthwave',
+      // 'dark',
     ]
   }
 }

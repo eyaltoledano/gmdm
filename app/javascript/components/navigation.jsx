@@ -1,39 +1,20 @@
 
 import React, { useState, useEffect } from 'react'
 import { Button, Navbar, Dropdown, Menu,  } from 'react-daisyui'
-import Api from '../services/api'
-import { Link } from 'react-router-dom';
-import { ConnectButton } from '@rainbow-me/rainbowkit';
-import { useAccountEffect, useAccount } from 'wagmi';
+import { Link, json } from 'react-router-dom';
+import renderAlert from './shared/renderAlert';
+import { useAppContext } from '../services/context';
+import { ConnectButton, useActiveAccount } from 'thirdweb/react';
 
 const Navigation = () => {
-    const [collections, setCollections] = useState([]);
-    const { address, isConnected } = useAccount();
-
-    useEffect(() => {
-      Api.get('/api/v1/collections')
-        .then(response => setCollections(response.data))
-        .catch(error => console.error('Error fetching collections:', error));
-    }, []);
-
-    useAccountEffect({
-      onConnect(data) {
-        console.log('Connected!', data);
-        // Dispatch action to update global state indicating user is authenticated
-        // Update global state with user data if needed
-      },
-      onDisconnect() {
-        console.log('Disconnected!');
-        // Dispatch action to update global state indicating user is logged out
-        // Clear user data from global state if needed
-      },
-    });
+    const { dispatch } = useAppContext();
+    const activeAccount = useActiveAccount();
 
     return (
       <div className='container flex mx-auto'>
         <Navbar>
           <Navbar.Start>
-          { isConnected && (
+          { true && (
               <Dropdown>
                 <Button tag="label" color="ghost" tabIndex={0} className="lg:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,7 +38,7 @@ const Navigation = () => {
               </Dropdown>
             )}
             <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
-            { isConnected && (
+            { true && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
@@ -82,21 +63,25 @@ const Navigation = () => {
             </Menu>
           </Navbar.Center> */}
           <Navbar.End>
-            { isConnected && (
+            { true && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/settings'}>Settings</Link>
                 </li>
               </Menu>
             )}
-            <ConnectButton 
-              chainStatus={{
-                smallScreen: 'avatar',
-                largeScreen: 'full',
+            <ConnectButton
+              connectModal={{
+                title: 'Connect Wallet',
+                description: 'Connect your wallet to use gmdm',              
               }}
-              showBalance={{
-                smallScreen: false,
-                largeScreen: true,
+              onConnect={(data) => {
+                if (data?.address) {
+                  dispatch({ type: 'SET_CONNECT_WALLET', payload: data?.address });              
+                }
+              }}
+              onDisconnect={() => {
+                dispatch({ type: 'DISCONNECT_WALLET' });
               }}
             />
           </Navbar.End>

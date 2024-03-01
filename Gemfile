@@ -21,6 +21,7 @@ gem "react-rails"
 gem "rails-env"
 gem 'jsbundling-rails'
 gem 'active_model_serializers'
+gem 'dotenv-rails'
 
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'

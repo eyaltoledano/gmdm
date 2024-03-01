@@ -3,6 +3,7 @@ import React, { createContext, useReducer, useContext } from 'react';
 // Initial state
 const initialState = {
   isConnected: false,
+  connectedAddress: '',
   isAuthenticated: false,
   user: null,
   // Add more state variables as needed
@@ -17,6 +18,7 @@ const reducer = (state, action) => {
     case 'LOGIN':
       return {
         ...state,
+        isConnected: true,
         isAuthenticated: true,
         user: action.payload,
       };
@@ -24,6 +26,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: false,
+        isConnected: false,
         user: null,
       };
     case 'CONNECT_WALLET':
@@ -31,10 +34,18 @@ const reducer = (state, action) => {
         ...state,
         isConnected: true,
       };
+    case 'SET_CONNECTED_WALLET':
+        return {
+          ...state,
+          isConnected: true,
+          connectedAddress: action.payload,
+        };
     case 'DISCONNECT_WALLET':
       return {
         ...state,
         isConnected: false,
+        isAuthenticated: false,
+        user: null,
       };
     // Add more cases for other actions
     default:

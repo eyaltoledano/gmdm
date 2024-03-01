@@ -3,7 +3,7 @@ const webpack = require("webpack")
 
 module.exports = {
   // mode: "development",
-  mode: "production",
+  mode: "development",
   cache: {
     type: 'filesystem', // Use filesystem caching
     buildDependencies: {
@@ -88,6 +88,17 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".js", ".jsx", ".ts", ".tsx"]
-  }
+    extensions: [".js", ".jsx", ".ts", ".tsx"],
+    fallback: {
+      "stream": require.resolve("stream-browserify"),
+      "assert": require.resolve("assert/"),
+      "http": require.resolve("stream-http"),
+      "https": require.resolve("https-browserify"),
+      "zlib": require.resolve("browserify-zlib"),
+      "url": require.resolve("url/"),
+    }
+  },
+  experiments: {
+    backCompat: false,
+  },
 }

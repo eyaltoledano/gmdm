@@ -7,77 +7,72 @@ import InboxPage from './pages/inbox'
 import SettingsPage from './pages/settings';
 import CollectionsPage from './pages/collections';
 import CollectionDetail from './components/collectionDetail';
-
-// RainbowKit
-import {
-  getDefaultConfig,
-  RainbowKitProvider,
-} from '@rainbow-me/rainbowkit';
-import { WagmiProvider } from 'wagmi';
-import {
-  mainnet,
-  goerli,
-  sepolia,
-} from 'wagmi/chains';
-import {
-  QueryClientProvider,
-  QueryClient,
-} from "@tanstack/react-query";
 import { Loading } from 'react-daisyui';
+import { ThirdwebProvider, metamaskConfig, rainbowConfig, walletConnectConfig, coinbaseConfig } from "thirdweb/react";
+import { ethereum, sepolia } from "thirdweb/chains";
+import { createThirdwebClient } from "thirdweb";
 
-const config = getDefaultConfig({
-  appName: 'gmdm',
-  projectId: '611738803ed16f41fef230cb1142c4dd',
-  chains: [mainnet, goerli, sepolia],
-  ssr: false,
-});
-
-const queryClient = new QueryClient();
-
-const Disclaimer = ({ Text }) => (
-  <Text>
-    Please connect your wallet to direct message as your NFTs.
-    You will be required to Sign in with Ethereum to prove wallet ownership. 
-  </Text>
-);
-
-
-const App = () => {
+const App = (props) => {
+  const { envVars } = props;
+  const { react_app_thirdweb_client_id, react_app_alchemy_id } = envVars;
   const [isLoading, setIsLoading] = useState(true);
+
+  const client = createThirdwebClient({
+    clientId: react_app_thirdweb_client_id,
+  });
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
+  const sdkOptions = {
+    alchemyApiKey: react_app_alchemy_id,
+  }
+
   return (
     <Router>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <RainbowKitProvider coolMode appInfo={{
-              appName: 'gmdm',
-              learnMoreUrl: 'https://gmdm.app',
-              disclaimer: Disclaimer
-            }}>
-            <AppProvider>
-              {isLoading && <Loading variant='ball' size='lg' />}
-              {!isLoading && (
-                <Layout>
-                  <Routes>
-                    <Route path="/" element={<HomePage />} />
-                    <Route path="/inbox" element={<InboxPage />} />
-                    <Route path="/settings" element={<SettingsPage />} />
-                    <Route path="/collections" element={<CollectionsPage />} />
-                    <Route path="/collections/:collection_slug" element={<CollectionDetail />} />
-                    {/* 
-                      <Route path="/collections/:collection_slug/nfts/:nftId" element={<NftDetail />} /> 
-                    */}
-                  </Routes>
-                </Layout>
-              )}
-            </AppProvider>
-          </RainbowKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+        <ThirdwebProvider
+          sdkOptions={sdkOptions}
+          client={client}
+          authConfig={{
+            authUrl: '/auth',
+            domain: 'https://localhost:3000'
+
+          }}
+          activeChain={sepolia}
+          dAppMeta={{
+            activeChain: "sepolia",
+            name: "gmdm",
+            description: "nft-to-nft messaging protocol",
+            // logoUrl: "https://example.com/logo.png",
+            url: "https://dmgm.app",
+            isDarkMode: false,
+          }}
+          wallets={[
+            metamaskConfig({ recommended: true }),
+            coinbaseConfig(),
+            walletConnectConfig(),
+            rainbowConfig(),        ]}
+          supportedChains={[ethereum, sepolia]}
+        >
+              <AppProvider>
+                {isLoading && <Loading variant='ball' size='lg' />}
+                {!isLoading && (
+                  <Layout>
+                    <Routes>
+                      <Route path="/" element={<HomePage />} />
+                      <Route path="/inbox" element={<InboxPage />} />
+                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/collections" element={<CollectionsPage />} />
+                      <Route path="/collections/:collection_slug" element={<CollectionDetail />} />
+                      {/* 
+                        <Route path="/collections/:collection_slug/nfts/:nftId" element={<NftDetail />} /> 
+                      */}
+                    </Routes>
+                  </Layout>
+                )}
+              </AppProvider>
+        </ThirdwebProvider>
     </Router>
   )
 }
