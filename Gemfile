@@ -22,6 +22,7 @@ gem "rails-env"
 gem 'jsbundling-rails'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
+gem 'siwe'
 
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'

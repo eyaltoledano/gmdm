@@ -1,10 +1,10 @@
 
 import React from 'react'
-import { useAppContext } from '../services/context'
+// import { useAppContext } from '../services/context'
 import Navigation from './navigation';
 
 function Layout(props) {
-  const { state, dispatch } = useAppContext();
+  // const { state, dispatch } = useAppContext();
   return (
     <>
       <header>

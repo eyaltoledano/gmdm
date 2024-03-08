@@ -8,52 +8,55 @@ import SettingsPage from './pages/settings';
 import CollectionsPage from './pages/collections';
 import CollectionDetail from './components/collectionDetail';
 import { Loading } from 'react-daisyui';
-import { ThirdwebProvider, metamaskConfig, rainbowConfig, walletConnectConfig, coinbaseConfig } from "thirdweb/react";
-import { ethereum, sepolia } from "thirdweb/chains";
-import { createThirdwebClient } from "thirdweb";
+import { Ethereum, Sepolia } from "@thirdweb-dev/chains";
+import { ThirdwebProvider, metamaskWallet, rainbowWallet, walletConnect, coinbaseWallet } from "@thirdweb-dev/react";
 
 const App = (props) => {
   const { envVars } = props;
-  const { react_app_thirdweb_client_id, react_app_alchemy_id } = envVars;
+  const { react_app_thirdweb_client_id, react_app_alchemy_key } = envVars;
+  // const env = process.env.REACT_APP_THIRDWEB_CLIENT_ID;
+  // console.log(env)
+  // const react_app_thirdweb_client_id = env.REACT_APP_THIRDWEB_CLIENT_ID;
+  // const react_app_alchemy_key = env.REACT_APP_ALCHEMY_KEY;
+  
   const [isLoading, setIsLoading] = useState(true);
-
-  const client = createThirdwebClient({
-    clientId: react_app_thirdweb_client_id,
-  });
 
   useEffect(() => {
     setIsLoading(false);
   }, []);
 
   const sdkOptions = {
-    alchemyApiKey: react_app_alchemy_id,
+    alchemyApiKey: react_app_alchemy_key,
   }
 
   return (
     <Router>
         <ThirdwebProvider
           sdkOptions={sdkOptions}
-          client={client}
+          clientId={react_app_thirdweb_client_id}
           authConfig={{
             authUrl: '/auth',
-            domain: 'https://localhost:3000'
-
+            domain: window.location.origin,
+            cors: {
+              origin: process.env.CORS_ORIGIN || "",
+              credentials: true,
+            },
           }}
-          activeChain={sepolia}
+          activeChain={Ethereum}
           dAppMeta={{
-            activeChain: "sepolia",
+            activeChain: "ethereum",
             name: "gmdm",
             description: "nft-to-nft messaging protocol",
-            // logoUrl: "https://example.com/logo.png",
             url: "https://dmgm.app",
             isDarkMode: false,
           }}
           wallets={[
-            metamaskConfig({ recommended: true }),
-            coinbaseConfig(),
-            walletConnectConfig(),
-            rainbowConfig(),        ]}
-          supportedChains={[ethereum, sepolia]}
+            metamaskWallet({ recommended: true }),
+            rainbowWallet,
+            walletConnect,
+            coinbaseWallet,
+          ]}
+          supportedChains={[Ethereum, Sepolia]}
         >
               <AppProvider>
                 {isLoading && <Loading variant='ball' size='lg' />}

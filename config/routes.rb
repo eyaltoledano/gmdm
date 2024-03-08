@@ -15,9 +15,11 @@ Rails.application.routes.draw do
     end
   end
 
-  get '/auth', to: 'auth#index', constraints: { format: 'json' }
-  get '/login', to: 'auth#login', constraints: { format: 'json' }
-  post '/logout', to: 'auth#logout', constraints: { format: 'json' }
+  # get '/auth/thirdweb', to: 'auth#payload'
+  post '/auth/payload', to: 'auth#payload'
+  post '/auth/login', to: 'auth#login'
+  get '/auth/user', to: 'auth#user'
+  post '/auth/logout', to: 'auth#logout'
 
   # Catchall route for React Router
   # This sends non-API requests to your React app, allowing React Router to handle routing

@@ -29,6 +29,7 @@
 /config/master.key
 
 .env
+/app/javascript/.env
 /app/assets/builds/*
 !/app/assets/builds/.keep
 

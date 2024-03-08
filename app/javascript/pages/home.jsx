@@ -18,6 +18,7 @@ const HomePage = () => {
                     <p>(State) Connected user address: {state.user?.eth_address || 'N/A'}</p>
                 </div>
             )}
+
         </div>
     )
 }

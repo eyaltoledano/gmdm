@@ -4,17 +4,36 @@ import { Button, Navbar, Dropdown, Menu,  } from 'react-daisyui'
 import { Link, json } from 'react-router-dom';
 import renderAlert from './shared/renderAlert';
 import { useAppContext } from '../services/context';
-import { ConnectButton, useActiveAccount } from 'thirdweb/react';
+import { 
+  ConnectWallet, 
+  useAddress, 
+  useUser,
+  useLogin,
+  useLogout, 
+} from "@thirdweb-dev/react";
 
 const Navigation = () => {
-    const { dispatch } = useAppContext();
-    const activeAccount = useActiveAccount();
+    const { state, dispatch } = useAppContext();
+    const { login } = useLogin();
+    const { logout } = useLogout();
+    const { user, isLoggedIn } = useUser();
+    const address = useAddress();
+
+    useEffect( () => {
+      if (address) {
+        dispatch({ type: 'SET_CONNECTED_WALLET', payload: address })
+      }
+
+      if (!address) {
+        dispatch({ type: 'DISCONNECT_WALLET' })
+      }
+    }, [address])
 
     return (
       <div className='container flex mx-auto'>
         <Navbar>
           <Navbar.Start>
-          { true && (
+          { address && (
               <Dropdown>
                 <Button tag="label" color="ghost" tabIndex={0} className="lg:hidden">
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -38,7 +57,7 @@ const Navigation = () => {
               </Dropdown>
             )}
             <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
-            { true && (
+            { isLoggedIn && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
@@ -63,25 +82,40 @@ const Navigation = () => {
             </Menu>
           </Navbar.Center> */}
           <Navbar.End>
-            { true && (
+            { isLoggedIn && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/settings'}>Settings</Link>
                 </li>
               </Menu>
             )}
-            <ConnectButton
+            <ConnectWallet
+              detailsBtn={() => {
+                return <button>dm'ing from {address}</button>;
+              }}
+              auth={{
+                loginOptional: false,
+                onLogin(token) {
+                  console.log("user logged in", token);
+                },
+                onLogout() {
+                  console.log("user logged out");
+                },
+              }}
               connectModal={{
                 title: 'Connect Wallet',
                 description: 'Connect your wallet to use gmdm',              
               }}
-              onConnect={(data) => {
-                if (data?.address) {
-                  dispatch({ type: 'SET_CONNECT_WALLET', payload: data?.address });              
+              
+              onConnect={(wallet) => { 
+                if (wallet?.account?.address) {
+                  dispatch({ type: 'SET_CONNECTED_WALLET', payload: wallet?.account?.address })
+                } else {
+                  console.log('no wallet account address')
                 }
               }}
-              onDisconnect={() => {
-                dispatch({ type: 'DISCONNECT_WALLET' });
+              onDisconnect={() => { 
+                dispatch({ type: 'DISCONNECT_WALLET' })
               }}
             />
           </Navbar.End>

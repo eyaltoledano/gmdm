@@ -26,6 +26,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         isAuthenticated: false,
+        connectedAddress: '',
         isConnected: false,
         user: null,
       };
@@ -44,6 +45,7 @@ const reducer = (state, action) => {
       return {
         ...state,
         isConnected: false,
+        connectedAddress: '',
         isAuthenticated: false,
         user: null,
       };
