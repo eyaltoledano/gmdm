@@ -23,6 +23,7 @@ gem 'jsbundling-rails'
 gem 'active_model_serializers'
 gem 'dotenv-rails'
 gem 'siwe'
+gem 'jwt'
 
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'

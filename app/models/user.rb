@@ -3,12 +3,17 @@
 # Table name: users
 #
 #  id          :bigint           not null, primary key
+#  email       :string
 #  eth_address :string
 #  last_seen   :datetime
-#  email       :string
 #  username    :string
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#
+# Indexes
+#
+#  index_users_on_eth_address        (eth_address) UNIQUE
+#  index_users_on_lower_eth_address  (lower((eth_address)::text)) UNIQUE
 #
 class User < ApplicationRecord
     has_many :nfts

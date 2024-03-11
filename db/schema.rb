@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_02_28_062559) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_11_213246) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -67,6 +67,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_02_28_062559) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index "lower((eth_address)::text)", name: "index_users_on_lower_eth_address", unique: true
+    t.index ["eth_address"], name: "index_users_on_eth_address", unique: true
   end
 
   add_foreign_key "dms", "nfts"
