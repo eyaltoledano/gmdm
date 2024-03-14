@@ -6,17 +6,15 @@ import renderAlert from './shared/renderAlert';
 import { useAppContext } from '../services/context';
 import { 
   ConnectWallet, 
-  useAddress, 
-  useUser,
-  useLogin,
-  useLogout, 
+  useAddress,
+  useDisconnect
 } from "@thirdweb-dev/react";
+import { useUser } from '../hooks/useUser';
 
 const Navigation = () => {
     const { state, dispatch } = useAppContext();
-    const { login } = useLogin();
-    const { logout } = useLogout();
-    const { user, isLoggedIn } = useUser();
+    const disconnect = useDisconnect()
+    const { user, logout, isUserLoading, isUserError, isLoggedIn } = useUser();
     const address = useAddress();
 
     useEffect( () => {
@@ -25,9 +23,14 @@ const Navigation = () => {
       }
 
       if (!address) {
+        dispatch({ type: 'LOGOUT' })
         dispatch({ type: 'DISCONNECT_WALLET' })
       }
-    }, [address])
+
+      if (address && user) {
+        dispatch({ type: 'LOGIN', payload: { user: user } })
+      }
+    }, [address, user])
 
     return (
       <div className='container flex mx-auto'>
@@ -57,7 +60,7 @@ const Navigation = () => {
               </Dropdown>
             )}
             <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
-            { isLoggedIn && (
+            { state.isLoggedIn && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
@@ -82,42 +85,42 @@ const Navigation = () => {
             </Menu>
           </Navbar.Center> */}
           <Navbar.End>
-            { isLoggedIn && (
+            { state.isLoggedIn && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/settings'}>Settings</Link>
                 </li>
               </Menu>
             )}
-            <ConnectWallet
-              detailsBtn={() => {
-                return <button>dm'ing from {address}</button>;
-              }}
-              auth={{
-                loginOptional: false,
-                onLogin(token) {
-                  console.log("user logged in", token);
-                },
-                onLogout() {
-                  console.log("user logged out");
-                },
-              }}
-              connectModal={{
-                title: 'Connect Wallet',
-                description: 'Connect your wallet to use gmdm',              
-              }}
-              
-              onConnect={(wallet) => { 
-                if (wallet?.account?.address) {
-                  dispatch({ type: 'SET_CONNECTED_WALLET', payload: wallet?.account?.address })
-                } else {
-                  console.log('no wallet account address')
-                }
-              }}
-              onDisconnect={() => { 
-                dispatch({ type: 'DISCONNECT_WALLET' })
-              }}
-            />
+            { state.isLoggedIn && (
+              <Button onClick={disconnect} color="primary" className="hidden lg:flex">Logout</Button>
+            )}
+            { !state.isLoggedIn && (
+              <ConnectWallet
+                showThirdwebBranding={false}
+                detailsBtn={() => {
+                  return <button>dm'ing from {address}</button>;
+                }}
+                auth={{
+                  loginOptional: false,
+                }}
+                connectModal={{
+                  title: 'Connect Wallet',
+                  description: 'Connect your wallet to use gmdm',              
+                }}
+                
+                onConnect={(wallet) => { 
+                  if (wallet?.account?.address) {
+                    dispatch({ type: 'SET_CONNECTED_WALLET', payload: wallet?.account?.address })
+                  } else {
+                    console.log('no wallet account address')
+                  }
+                }}
+                onDisconnect={() => { 
+                  dispatch({ type: 'DISCONNECT_WALLET' })
+                }}
+              />
+            )}
           </Navbar.End>
         </Navbar>
       </div>

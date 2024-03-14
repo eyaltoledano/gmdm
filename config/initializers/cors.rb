@@ -7,10 +7,13 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "http://localhost:3001"
+    origins "http://localhost:3000", 'gmdm.app'
 
     resource "*",
       headers: :any,
-      methods: [:get, :post, :put, :patch, :delete, :options, :head]
+      methods: [:get, :post, :delete, :put, :patch, :options, :head],
+      expose: ['Authorization'],  # Exposes Authorization header in the response
+      credentials: true, # Allows cookies to be sent cross-origin
+      max_age: 600
   end
 end

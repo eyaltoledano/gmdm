@@ -10,14 +10,14 @@ import CollectionDetail from './components/collectionDetail';
 import { Loading } from 'react-daisyui';
 import { Ethereum, Sepolia } from "@thirdweb-dev/chains";
 import { ThirdwebProvider, metamaskWallet, rainbowWallet, walletConnect, coinbaseWallet } from "@thirdweb-dev/react";
+import { SWRConfig } from 'swr';
+import Api from './services/api';
+
+const fetcher = url => Api.get(url).then(res => res.data);
 
 const App = (props) => {
   const { envVars } = props;
   const { react_app_thirdweb_client_id, react_app_alchemy_key } = envVars;
-  // const env = process.env.REACT_APP_THIRDWEB_CLIENT_ID;
-  // console.log(env)
-  // const react_app_thirdweb_client_id = env.REACT_APP_THIRDWEB_CLIENT_ID;
-  // const react_app_alchemy_key = env.REACT_APP_ALCHEMY_KEY;
   
   const [isLoading, setIsLoading] = useState(true);
 
@@ -31,6 +31,7 @@ const App = (props) => {
 
   return (
     <Router>
+      <SWRConfig value={{ fetcher }}>
         <ThirdwebProvider
           sdkOptions={sdkOptions}
           clientId={react_app_thirdweb_client_id}
@@ -38,8 +39,8 @@ const App = (props) => {
             authUrl: '/auth',
             domain: window.location.origin,
             cors: {
-              origin: process.env.CORS_ORIGIN || "",
-              credentials: true,
+              origin: 'localhost:3000',
+              // credentials: true,
             },
           }}
           activeChain={Ethereum}
@@ -76,6 +77,7 @@ const App = (props) => {
                 )}
               </AppProvider>
         </ThirdwebProvider>
+      </SWRConfig>
     </Router>
   )
 }

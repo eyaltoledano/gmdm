@@ -4,9 +4,9 @@ import React, { createContext, useReducer, useContext } from 'react';
 const initialState = {
   isConnected: false,
   connectedAddress: '',
-  isAuthenticated: false,
   user: null,
-  // Add more state variables as needed
+  isLoggedIn: false,
+  isUserLoading: false,
 };
 
 // Create context
@@ -15,17 +15,30 @@ const AppContext = createContext();
 // Reducer function
 const reducer = (state, action) => {
   switch (action.type) {
+    case 'SET_USER':
+      return {
+        ...state,
+        user: action.payload,
+        isLoggedIn: !!action.payload,
+        isUserLoading: false,
+      };
+    case 'SET_USER_LOADING':
+      return {
+        ...state,
+        isUserLoading: action.payload,
+      };
     case 'LOGIN':
       return {
         ...state,
         isConnected: true,
-        isAuthenticated: true,
-        user: action.payload,
+        isLoggedIn: true,
+        isUserLoading: false,
+        user: action.payload.user,
       };
     case 'LOGOUT':
       return {
         ...state,
-        isAuthenticated: false,
+        isLoggedIn: false,
         connectedAddress: '',
         isConnected: false,
         user: null,
@@ -36,17 +49,17 @@ const reducer = (state, action) => {
         isConnected: true,
       };
     case 'SET_CONNECTED_WALLET':
-        return {
-          ...state,
-          isConnected: true,
-          connectedAddress: action.payload,
-        };
+      return {
+        ...state,
+        isConnected: true,
+        connectedAddress: action.payload,
+      };
     case 'DISCONNECT_WALLET':
       return {
         ...state,
         isConnected: false,
         connectedAddress: '',
-        isAuthenticated: false,
+        isLoggedIn: false,
         user: null,
       };
     // Add more cases for other actions

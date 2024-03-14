@@ -1,10 +1,12 @@
+require 'siwe'
+require 'time'
+require 'json'
+require 'jwt'
+
 class AuthController < ApplicationController
     protect_from_forgery with: :null_session
-
-    require 'siwe'
-    require 'time'
-    require 'json'
-
+    before_action :authenticate_request!, only: [:user, :logout]
+  
     def payload
         nonce_value = generate_nonce
         
@@ -37,12 +39,7 @@ class AuthController < ApplicationController
         message = Siwe::Message.from_json_string(session_message_json)
 
         if message.verify(signature, message.domain, message.issued_at, message.nonce)
-            binding.pry
-            puts "Signature is valid"
             session[:message] = nil
-            session[:ens] = params[:ens] if params[:ens]
-            session[:eth_address] = message.address
-      
             handle_successful_login(message.address)
           else
             head :bad_request
@@ -50,27 +47,17 @@ class AuthController < ApplicationController
     end
 
     def user
-        # binding.pry
-        if current_user
-            current_user.seen
-            current_user.save
-            render json: { user: current_user, ens: session[:ens], eth_address: session[:eth_address], lastSeen: current_user.last_seen }
+        if @current_user
+            @current_user.seen
+            render json: { user: @current_user, lastSeen: @current_user.last_seen }
         else
-            # return object with no user
-            render json: { user: nil, ens: session[:ens], eth_address: session[:eth_address] }
+            render json: { user: nil, message: 'no user found' }, status: :unauthorized
         end
     end
 
     def logout
-        if current_user
-            current_user.seen
-            current_user.save
-            session[:ens] = nil
-            session[:eth_address] = nil
-            head :no_content
-        else
-            head :unauthorized
-        end
+        cookies.delete(:auth_token)
+        head :no_content
     end
 
     private
@@ -79,11 +66,31 @@ class AuthController < ApplicationController
         Siwe::Util.generate_nonce
     end
 
-    def handle_successful_login(message_address)
-        last_seen = DateTime.now
-        # Upsert user based on Ethereum address, handling new user creation or updating last_seen
-        User.upsert({ eth_address: message_address, last_seen: last_seen }, unique_by: :eth_address)
-        render json: { status: "Login successful" }
+    def handle_successful_login(message_address) 
+        user = User.find_or_create_by(eth_address: message_address)
+        user.seen
+        jwt_token = generate_jwt_token(user.eth_address)
+        
+        # Set an HTTP-Only cookie
+        cookies.encrypted[:auth_token] = {
+            value: jwt_token,
+            httponly: true,
+            secure: Rails.env.production?, # ensure this is true in production for HTTPS
+            same_site: :strict,
+            expires: 24.hours.from_now
+        }
+        
+        render json: { status: "Login successful", ok: true, token: jwt_token }
+    end
+    
+    def generate_jwt_token(eth_address)
+        payload = {
+          sub: eth_address.downcase,
+          iat: Time.now.to_i,
+          exp: Time.now.to_i + 24 * 3600, # 24 hours
+          aud: request.host_with_port
+        }
+        JWT.encode(payload, ENV['JWT_KEY'], 'HS256')
     end
 
     protected

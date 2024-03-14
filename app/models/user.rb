@@ -18,17 +18,10 @@
 class User < ApplicationRecord
     has_many :nfts
     before_validation :downcase_eth_address
-    validates :eth_address, presence: true, uniqueness: true
-
-    # find or create a user by eth_address
-    def self.find_or_create_by(eth_address:)
-        user = User.find_by(eth_address: eth_address.downcase)
-        return user if user
-        User.create(eth_address: eth_address)
-    end
+    validates :eth_address, presence: true, uniqueness: { case_sensitive: false }
 
     def seen
-        self.last_seen = DateTime.now
+        update(last_seen: DateTime.now)
     end
 
     private

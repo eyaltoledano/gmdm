@@ -2,7 +2,8 @@ import React from 'react'
 import { useAppContext } from '../services/context'
 
 const HomePage = () => {
-    const { state, dispatch } = useAppContext();
+    const { state } = useAppContext();
+
     return (
         <div className="p-4 container mx-auto">
             <div className='text-center'>
@@ -12,10 +13,10 @@ const HomePage = () => {
             
             {state && (
                 <div className='text-center'>
-                    <p>(State) Connected? {state.isConnected.toString()}</p>
-                    <p>(State) Connected Address: {state.connectedAddress || 'N/A'}</p>
-                    <p>(State) Authenticated? {state.isAuthenticated.toString()}</p>
-                    <p>(State) Connected user address: {state.user?.eth_address || 'N/A'}</p>
+                    <p>Connected? {state.isConnected.toString()}</p>
+                    <p>Connected Address: {state.connectedAddress || 'N/A'}</p>
+                    <p>Logged In? {state.isLoggedIn?.toString()}</p>
+                    <p>Logged in User address: {state.user?.eth_address || 'N/A'}</p>
                 </div>
             )}
 
