@@ -40,7 +40,7 @@ const App = (props) => {
             domain: window.location.origin,
             cors: {
               origin: 'localhost:3000',
-              // credentials: true,
+              credentials: true,
             },
           }}
           activeChain={Ethereum}

@@ -2,13 +2,14 @@
 #
 # Table name: users
 #
-#  id          :bigint           not null, primary key
-#  email       :string
-#  eth_address :string
-#  last_seen   :datetime
-#  username    :string
-#  created_at  :datetime         not null
-#  updated_at  :datetime         not null
+#  id            :bigint           not null, primary key
+#  email         :string
+#  eth_address   :string
+#  last_seen     :datetime
+#  token_version :integer          default(1), not null
+#  username      :string
+#  created_at    :datetime         not null
+#  updated_at    :datetime         not null
 #
 # Indexes
 #

@@ -5,12 +5,25 @@ const fetcher = url => Api.get(url).then(res => res.data);
 
 export function useUser() {
   const { data, error, mutate } = useSWR('/auth/user', fetcher);
-  console.log('useUser', data, error, mutate)
 
   const logout = async () => {
-    await Api.post('/auth/logout');
-    // After logging out, you can call mutate to re-fetch the user data, which should now be null or undefined
-    mutate(); // This re-fetches the user data, expecting it to now be unauthorized or null
+    try {
+      // Attempt to logout
+      const response = await Api.post('/auth/logout', {}, {
+        headers: { 'X-CSRF-Token': csrfToken },
+      });
+      // Check for successful logout response (e.g., status 204)
+      if (response.status === 204) {
+        // Use mutate to update SWR cache, setting the user data to undefined
+        mutate(undefined, false); // The second argument false means do not revalidate
+      } else {
+        console.error('Logout failed:', response);
+        // Handle failed logout if necessary
+      }
+    } catch (error) {
+      console.error('Error during logout:', error);
+      // Handle error (e.g., network error, server error)
+    }
   };
 
   return {

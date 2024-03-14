@@ -4,7 +4,7 @@ require 'json'
 require 'jwt'
 
 class AuthController < ApplicationController
-    protect_from_forgery with: :null_session
+    protect_from_forgery with: :null_session, except: [:logout]
     before_action :authenticate_request!, only: [:user, :logout]
   
     def payload
@@ -56,8 +56,23 @@ class AuthController < ApplicationController
     end
 
     def logout
-        cookies.delete(:auth_token)
-        head :no_content
+        token = cookies.encrypted[:auth_token]
+        puts "Logging out user with token: #{token}"
+        if @current_user
+            user = User.find_by(eth_address: @current_user.eth_address)
+            puts "Current token_version: #{user.token_version}"
+            user.token_version += 1
+            if user.save
+                puts "Updated token_version: #{user.token_version}"
+                # binding.pry
+                cookies.delete(:auth_token)
+                head :no_content
+            else 
+                render json: { message: 'could not update user token version', errors: user.errors.full_messages }, status: :unprocessable_entity
+            end
+        else
+            render json: { message: 'no user found to log out' }, status: :unauthorized
+        end
     end
 
     private
@@ -67,28 +82,34 @@ class AuthController < ApplicationController
     end
 
     def handle_successful_login(message_address) 
-        user = User.find_or_create_by(eth_address: message_address)
-        user.seen
-        jwt_token = generate_jwt_token(user.eth_address)
-        
-        # Set an HTTP-Only cookie
-        cookies.encrypted[:auth_token] = {
-            value: jwt_token,
-            httponly: true,
-            secure: Rails.env.production?, # ensure this is true in production for HTTPS
-            same_site: :strict,
-            expires: 24.hours.from_now
-        }
-        
-        render json: { status: "Login successful", ok: true, token: jwt_token }
+        user = User.find_or_create_by(eth_address: message_address.downcase)
+        if user
+            user.seen
+            jwt_token = generate_jwt_token(user.eth_address, user.token_version)
+            
+            # Set an HTTP-Only cookie
+            cookies.encrypted[:auth_token] = {
+                value: jwt_token,
+                httponly: true,
+                secure: Rails.env.production?, # ensure this is true in production for HTTPS
+                same_site: :strict,
+                expires: 24.hours.from_now
+            }
+            
+            render json: { status: "Login successful", ok: true, token: jwt_token }
+        else
+            render json: { error: "User not found or could not be created" }, status: :unprocessable_entity
+        end
     end
     
-    def generate_jwt_token(eth_address)
+    def generate_jwt_token(eth_address, token_version)
+        puts "Generating JWT token for #{eth_address} with token_version #{token_version}"
         payload = {
           sub: eth_address.downcase,
           iat: Time.now.to_i,
           exp: Time.now.to_i + 24 * 3600, # 24 hours
-          aud: request.host_with_port
+          aud: request.host_with_port,
+          token_version: token_version
         }
         JWT.encode(payload, ENV['JWT_KEY'], 'HS256')
     end

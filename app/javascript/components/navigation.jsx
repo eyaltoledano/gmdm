@@ -32,6 +32,19 @@ const Navigation = () => {
       }
     }, [address, user])
 
+    const onLogout = async () => {
+      await logout()
+      await disconnect()
+      // const response = await Api.post('/auth/logout');
+      // if (response.status === 204) { // Check if the status code is 204 No Content, indicating successful logout
+      //   console.log('Logged out successfully');
+      //   dispatch({ type: 'LOGOUT' });
+      // } else {
+      //   console.error('Logout was unsuccessful', response);
+      // }
+      dispatch({ type: 'LOGOUT' });
+    }
+
     return (
       <div className='container flex mx-auto'>
         <Navbar>
@@ -93,7 +106,7 @@ const Navigation = () => {
               </Menu>
             )}
             { state.isLoggedIn && (
-              <Button onClick={disconnect} color="primary" className="hidden lg:flex">Logout</Button>
+              <Button onClick={onLogout} color="primary" className="hidden lg:flex">Logout</Button>
             )}
             { !state.isLoggedIn && (
               <ConnectWallet
@@ -112,8 +125,6 @@ const Navigation = () => {
                 onConnect={(wallet) => { 
                   if (wallet?.account?.address) {
                     dispatch({ type: 'SET_CONNECTED_WALLET', payload: wallet?.account?.address })
-                  } else {
-                    console.log('no wallet account address')
                   }
                 }}
                 onDisconnect={() => { 
