@@ -10,6 +10,5 @@ namespace :db do
 
     seeder = CollectionSeeder.new(contract_address)
     seeder.seed_collection
-    puts "Seeding completed for contract: #{contract_address}"
   end
 end

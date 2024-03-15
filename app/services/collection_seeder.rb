@@ -19,6 +19,7 @@ class CollectionSeeder
         collection_metadata = @alchemy_service.get_contract_metadata(@contract_address)
         collection = Collection.find_or_initialize_by(contract_address: @contract_address)
         collection.name = collection_metadata['name']
+        collection.symbol = collection_metadata['symbol']
         collection.description = collection_metadata['description']
         collection.logo_url = collection_metadata['openSeaMetadata']['imageUrl']
         collection.featured_image_url = collection_metadata['openSeaMetadata']['bannerImageUrl']
@@ -55,8 +56,8 @@ class CollectionSeeder
               nft = collection.nfts.find_or_initialize_by(token_id: nft_data['tokenId'].to_s)
               nft.traits = nft_data["raw"]["metadata"]["attributes"] if nft_data["raw"] && nft_data["raw"]["metadata"] && nft_data["raw"]["metadata"]["attributes"]
               nft.image_url = nft_data["image"]["pngUrl"] if nft_data["image"] && nft_data["image"]["pngUrl"]
-              nft.name = nft_data["name"]
               nft.token_id = nft_data["tokenId"]
+              nft.name = nft_data["name"] || "#{collection.symbol} ##{nft.token_id}"
               puts "✨ #{nft.name} processed. Saving..."
               if nft.new_record? || nft.changed?
                 unless nft.save

@@ -12,6 +12,7 @@
 #  manager_address    :string(42)       not null
 #  name               :string           not null
 #  slug               :string           not null
+#  symbol             :string
 #  upgraded           :boolean          default(FALSE)
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
