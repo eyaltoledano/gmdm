@@ -51,12 +51,6 @@ RSpec.describe AlchemyApiService do
     end
   end
 
-  #  Test for
-  # def get_contract_metadata(contract_address)
-  #     endpoint = "#{BASE_URL}#{@api_key}/getContractMetadata"
-  #     params = { contractAddress: contract_address }
-  #     make_request(endpoint, params)
-  # end
   describe "#get_contract_metadata" do
     it "returns metadata for a given contract address" do
       response = service.get_contract_metadata(contract_address)
@@ -73,22 +67,38 @@ RSpec.describe AlchemyApiService do
     end
   end
 
-  # Test for
-  # def get_nfts_for_contract(contract_address, collection_slug, with_metadata = true)
-  #     endpoint = "#{BASE_URL}#{@api_key}/getNFTsForContract"
-  #     params = { contractAddress: contract_address, collectionSlug: collection_slug, withMetadata: with_metadata }
-  #     make_request(endpoint, params)
-  # end
+  describe "#get_nfts_for_contract" do
+    it "returns NFTs for a given contract address" do
+      response = service.get_nfts_for_contract(contract_address)
+      expect(response).to be_present
+      expect(response.size).to be(500)
+      puts "Successfully collected NFTs in the '#{collection_name}' collection: #{response.size.to_s} -- limited to 500 NFTs for test speed/API efficiency."
+    end
+  end
 
-  # describe "#get_nfts_for_contract" do
-  #   it "returns NFTs for a given contract address" do
-  #     response = service.get_nfts_for_contract(contract_address, collection_name)
-  #     expect(response).to be_present
-  #     expect(response).to have_key("nfts")
-  #     expect(response["nfts"]).to be_present
-  #     expect(response["nfts"].size).to be > 0
-  #     puts "Total NFTs in the '#{collection_name}' collection: #{response['nfts'].size}"
-  #   end
-  # end
+  describe "#get_contracts_for_owner" do
+    it "returns contracts owned by a specific user address" do
+      noMetadata = false
+      response = service.get_contracts_for_owner(valid_owner_address, noMetadata)
+      expect(response).to be_present
+      expect(response.size).to be <= 500
+      puts "Total contracts owned by Poopie: #{response.size.to_s}"
+    end
+  end
+
+  describe "#summarize_nft_attributes", :current do
+    it "returns summarized NFT attributes for a given contract address" do
+      response = service.summarize_nft_attributes(contract_address)
+      expect(response).to be_present
+      expect(response).to have_key("summary")
+      expect(response).to have_key("totalSupply")
+      puts "Summarized NFT attributes for collection '#{response["contractAddress"]}'"
+      trait_types = response["summary"].keys.size
+      total_unique_attributes = response["summary"].values.sum { |category| category.keys.size }
+      puts "Found #{trait_types} trait types and #{total_unique_attributes} unique traits."
+      expect(trait_types).to be > 0
+      expect(total_unique_attributes).to be > 0
+    end
+  end
 
 end

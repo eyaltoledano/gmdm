@@ -19,7 +19,7 @@ class AlchemyApiService
         params = { 
             owner: owner_address, 
             pageSize: page_size, 
-            # withMetadata: with_metadata, 
+            withMetadata: with_metadata, 
             orderBy: 'transferTime', 
             # excludeFilters: ['SPAM'], 
             # spamConfidenceLevel: 'HIGH'
@@ -48,15 +48,91 @@ class AlchemyApiService
         make_request(endpoint, params)
     end
 
-    def get_nfts_for_contract(contract_address, collection_slug, with_metadata = true)
+    # VERIFIED
+    def get_nfts_for_contract(contract_address, with_metadata = true)
+        nfts = [] # Array to hold all fetched NFTs
         endpoint = "#{BASE_URL}#{@api_key}/getNFTsForContract"
-        params = { contractAddress: contract_address, collectionSlug: collection_slug, withMetadata: with_metadata }
-        make_request(endpoint, params)
+        page_key = nil
+      
+        loop do
+          params = {
+            contractAddress: contract_address,
+            withMetadata: with_metadata
+          }
+          # Include startToken in the params if it exists
+          params[:pageKey] = page_key if page_key
+      
+          response = make_request(endpoint, params)
+      
+          if response && response["nfts"]
+            nfts.concat(response["nfts"]) # Add the fetched NFTs to the array
+            page_key = response["pageKey"] # Update the startToken with the pageKey from the response
+          else
+            puts "No NFTs found or error fetching NFTs."
+            break
+          end
+          puts "Fetched #{nfts.size} NFTs so far. Fetching more..."
+          # Break the loop if there's no pageKey in the response
+          break unless page_key
+
+          if ENV['RAILS_ENV'] == 'test' && nfts.size >= 500
+            puts "Test environment detected. Limiting to 500 results and stopping early."
+            break
+          end
+
+          sleep 0.25 # Sleep for 0.15 seconds before making the next request
+        end
+      
+        nfts # Return the collected NFTs
+        rescue => e
+            puts "Failed to fetch all NFTs: #{e.message}"
+            nil
     end
 
-    def get_contracts_for_owner(owner_address)
+    # VERIFIED
+    def get_contracts_for_owner(owner_address, with_metadata = false)
+        contracts = [] # Array to hold all fetched contracts
         endpoint = "#{BASE_URL}#{@api_key}/getContractsForOwner"
-        params = { owner: owner_address }
+        page_key = nil
+      
+        loop do
+          params = {
+            owner: owner_address,
+            withMetadata: with_metadata
+          }
+          # Include pageKey in the params if it exists
+          params[:pageKey] = page_key if page_key
+      
+          response = make_request(endpoint, params)
+      
+          if response && response["contracts"]
+            contracts.concat(response["contracts"]) # Add the fetched contracts to the array
+            page_key = response["pageKey"] # Update the page_key with the pageKey from the response
+          else
+            puts "No contracts found or error fetching contracts."
+            break
+          end
+          puts "Fetched #{contracts.size} contracts so far. Fetching more..."
+          # Break the loop if there's no pageKey in the response
+          break unless page_key
+    
+          if ENV['RAILS_ENV'] == 'test' && contracts.size >= 500
+            puts "Test environment detected. Limiting to 500 results and stopping early."
+            break
+          end
+    
+          sleep 0.25 # Sleep for 0.15 seconds before making the next request
+        end
+      
+        contracts # Return the collected contracts
+    rescue => e
+        puts "Failed to fetch all contracts: #{e.message}"
+        nil
+    end 
+    
+    def summarize_nft_attributes(contract_address)
+        endpoint = "#{BASE_URL}#{@api_key}/summarizeNFTAttributes"
+        params = { contractAddress: contract_address }
         make_request(endpoint, params)
     end
 
@@ -105,12 +181,6 @@ class AlchemyApiService
     def compute_rarity(contract_address, token_id)
         endpoint = "#{BASE_URL}#{@api_key}/computeRarity"
         params = { contractAddress: contract_address, tokenId: token_id }
-        make_request(endpoint, params)
-    end
-
-    def summarize_nft_attributes(contract_address)
-        endpoint = "#{BASE_URL}#{@api_key}/summarizeNFTAttributes"
-        params = { contractAddress: contract_address }
         make_request(endpoint, params)
     end
 
