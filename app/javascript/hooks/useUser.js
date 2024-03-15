@@ -9,9 +9,7 @@ export function useUser() {
   const logout = async () => {
     try {
       // Attempt to logout
-      const response = await Api.post('/auth/logout', {}, {
-        headers: { 'X-CSRF-Token': csrfToken },
-      });
+      const response = await Api.post('/auth/logout');
       // Check for successful logout response (e.g., status 204)
       if (response.status === 204) {
         // Use mutate to update SWR cache, setting the user data to undefined

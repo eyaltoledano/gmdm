@@ -15,10 +15,10 @@ import Api from './services/api';
 
 const fetcher = url => Api.get(url).then(res => res.data);
 
-const App = (props) => {
-  const { envVars } = props;
-  const { react_app_thirdweb_client_id, react_app_alchemy_key } = envVars;
-  
+const react_app_thirdweb_client_id = process.env.REACT_APP_THIRDWEB_CLIENT_ID;
+const react_app_alchemy_key = process.env.REACT_APP_ALCHEMY_KEY;
+
+const App = () => {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {

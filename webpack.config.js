@@ -1,5 +1,6 @@
 const path    = require("path")
 const webpack = require("webpack")
+const Dotenv = require('dotenv-webpack');
 
 module.exports = {
   // mode: "development",
@@ -23,7 +24,17 @@ module.exports = {
   plugins: [
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1
-    })
+    }),
+    new Dotenv({
+      path: './.env', // Load the .env file from the root of your project
+      systemvars: true, // Load all system variables as well (useful for CI/CD environments)
+      safe: true, // Load .env.example (defaults to "false" which does not use dotenv-safe)
+    }),
+    new webpack.DefinePlugin({
+      'process.env.REACT_APP_API_BASE_URL': JSON.stringify(process.env.REACT_APP_API_BASE_URL),
+      'process.env.REACT_APP_ALCHEMY_KEY': JSON.stringify(process.env.REACT_APP_ALCHEMY_KEY),
+      'process.env.REACT_APP_THIRDWEB_CLIENT_ID': JSON.stringify(process.env.REACT_APP_THIRDWEB_CLIENT_ID),
+    }),
   ],
   module: {
     rules: [
@@ -65,10 +76,6 @@ module.exports = {
           }
         ]
       },
-      // {
-      //   test: /\.css$/i,
-      //   use: ['style-loader', 'css-loader'],
-      // },
       {
         test: /\.css$/,
         use: [
