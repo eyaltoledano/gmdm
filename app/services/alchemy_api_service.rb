@@ -55,32 +55,35 @@ class AlchemyApiService
         page_key = nil
       
         loop do
-          params = {
+            params = {
             contractAddress: contract_address,
             withMetadata: with_metadata
-          }
-          # Include startToken in the params if it exists
-          params[:pageKey] = page_key if page_key
-      
-          response = make_request(endpoint, params)
-      
-          if response && response["nfts"]
-            nfts.concat(response["nfts"]) # Add the fetched NFTs to the array
-            page_key = response["pageKey"] # Update the startToken with the pageKey from the response
-          else
-            puts "No NFTs found or error fetching NFTs."
-            break
-          end
-          puts "Fetched #{nfts.size} NFTs so far. Fetching more..."
-          # Break the loop if there's no pageKey in the response
-          break unless page_key
+            }
 
-          if ENV['RAILS_ENV'] == 'test' && nfts.size >= 500
-            puts "Test environment detected. Limiting to 500 results and stopping early."
-            break
-          end
+            params[:startToken] = page_key if page_key        
+            response = make_request(endpoint, params)
+        
+            if response && response["nfts"]
+                nfts.concat(response["nfts"]) # Add the fetched NFTs to the array
+                page_key = response["pageKey"] # Update pageKey with the new one from the response
+                puts "Fetched #{nfts.size} NFTs so far."
+            else
+                puts "No NFTs found or error fetching NFTs."
+                break
+            end
+        
+            # Break the loop if the new pageKey is nil or empty, indicating no more data
+            if page_key.nil? || page_key.empty?      
+                puts "No more NFTs to fetch. Please wait, this might take awhile..."
+                break
+            end
 
-          sleep 0.25 # Sleep for 0.15 seconds before making the next request
+            if ENV['RAILS_ENV'] == 'test' && nfts.size >= 500
+                puts "Test environment detected. Limiting to 500 results and stopping early."
+                break
+            end
+
+            sleep 0.25
         end
       
         nfts # Return the collected NFTs
@@ -88,6 +91,26 @@ class AlchemyApiService
             puts "Failed to fetch all NFTs: #{e.message}"
             nil
     end
+
+    # VERIFIED
+    def get_nft_metadata_batch(all_tokens)
+        # Initialize an array to hold the metadata results from all batches
+        all_metadata = []
+      
+        # Split all_tokens into batches of 100 or fewer
+        all_tokens.each_slice(100) do |tokens_batch|
+          params = { tokens: tokens_batch }
+          batch_response = make_request("#{BASE_URL}#{@api_key}/getNFTMetadataBatch", {tokens: tokens_batch}, :post)
+      
+          # Check for successful response and presence of 'nfts' key before concatenating
+          if batch_response && batch_response["nfts"] && batch_response["nfts"].size > 0
+            all_metadata.concat(batch_response["nfts"])
+          end
+        end
+      
+        # Return the aggregated metadata from all batches
+        all_metadata # all_metadata is an array of objects, there is no "nfts" parent.
+    end      
 
     # VERIFIED
     def get_contracts_for_owner(owner_address, with_metadata = false)
@@ -218,12 +241,6 @@ class AlchemyApiService
     #     make_request(endpoint, params)
     # end
 
-    # def get_nft_metadata_batch(contract_addresses, token_ids, token_type = "erc721")
-    #     endpoint = "#{BASE_URL}#{@api_key}/getNFTMetadataBatch"
-    #     params = { contractAddresses: contract_addresses.join(','), tokenIds: token_ids.join(','), tokenType: token_type }
-    #     make_request(endpoint, params)
-    # end
-
     # def get_contract_metadata_batch(contract_addresses)
     #     endpoint = "#{BASE_URL}#{@api_key}/getContractMetadataBatch"
     #     params = { contractAddresses: contract_addresses.join(',') }
@@ -250,12 +267,24 @@ class AlchemyApiService
 
     private
 
-    def make_request(endpoint, params)
+    def make_request(endpoint, params, method = :get)
         uri = URI(endpoint)
-        uri.query = URI.encode_www_form(params)
-        response = Net::HTTP.get_response(uri)
+      
+        if method == :get
+          uri.query = URI.encode_www_form(params)
+          response = Net::HTTP.get_response(uri)
+        else # :post
+          http = Net::HTTP.new(uri.host, uri.port)
+          http.use_ssl = true
+          request = Net::HTTP::Post.new(uri)
+          request["Accept"] = "application/json"
+          request["Content-Type"] = "application/json; charset=utf-8'"
+          request.body = params.to_json
+          response = http.request(request)
+        end
+      
         JSON.parse(response.body) if response.is_a?(Net::HTTPSuccess)
-    rescue => e
+      rescue => e
         puts "Failed to fetch data: #{e.message}"
         nil
     end

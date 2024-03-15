@@ -6,6 +6,7 @@
 #  active             :boolean          default(FALSE)
 #  card_image_url     :string
 #  contract_address   :string           not null
+#  description        :text
 #  featured_image_url :string
 #  logo_url           :string
 #  manager_address    :string(42)       not null

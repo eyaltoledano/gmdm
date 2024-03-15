@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_14_211418) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_15_184152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -26,6 +26,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_14_211418) do
     t.string "slug", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.text "description"
     t.index ["slug"], name: "index_collections_on_slug", unique: true
   end
 
@@ -52,9 +53,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_14_211418) do
     t.bigint "user_id"
     t.bigint "collection_id", null: false
     t.string "token_id"
-    t.string "metadata_url"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.jsonb "traits", default: {}, null: false
+    t.string "image_url"
+    t.string "name"
+    t.index ["collection_id", "token_id"], name: "index_nfts_on_collection_id_and_token_id_unique", unique: true
     t.index ["collection_id"], name: "index_nfts_on_collection_id"
     t.index ["user_id"], name: "index_nfts_on_user_id"
   end

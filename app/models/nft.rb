@@ -3,7 +3,9 @@
 # Table name: nfts
 #
 #  id            :bigint           not null, primary key
-#  metadata_url  :string
+#  image_url     :string
+#  name          :string
+#  traits        :jsonb            not null
 #  created_at    :datetime         not null
 #  updated_at    :datetime         not null
 #  collection_id :bigint           not null
@@ -12,8 +14,9 @@
 #
 # Indexes
 #
-#  index_nfts_on_collection_id  (collection_id)
-#  index_nfts_on_user_id        (user_id)
+#  index_nfts_on_collection_id                      (collection_id)
+#  index_nfts_on_collection_id_and_token_id_unique  (collection_id,token_id) UNIQUE
+#  index_nfts_on_user_id                            (user_id)
 #
 # Foreign Keys
 #
@@ -21,8 +24,9 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class Nft < ApplicationRecord
-  belongs_to :user
+  belongs_to :user, optional: true
   belongs_to :collection
   has_many :dms
   has_many :messages, through: :dms
+  validates :token_id, uniqueness: { scope: :collection_id, message: "Token ID must be unique within a collection" }
 end
