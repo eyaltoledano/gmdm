@@ -130,61 +130,123 @@ class AlchemyApiService
         nil
     end 
     
+    # VERIFIED
     def summarize_nft_attributes(contract_address)
         endpoint = "#{BASE_URL}#{@api_key}/summarizeNFTAttributes"
         params = { contractAddress: contract_address }
         make_request(endpoint, params)
     end
 
+    # VERIFIED
     def get_owners_for_nft(contract_address, token_id)
+        owners = [] # Array to hold all fetched owners
         endpoint = "#{BASE_URL}#{@api_key}/getOwnersForNFT"
-        params = { contractAddress: contract_address, tokenId: token_id }
-        make_request(endpoint, params)
-    end
+        page_key = nil
+      
+        loop do
+          params = {
+            contractAddress: contract_address,
+            tokenId: token_id
+          }
+          # Include pageKey in the params if it exists
+          params[:pageKey] = page_key if page_key
+      
+          response = make_request(endpoint, params)
+      
+          if response && response["owners"]
+            owners.concat(response["owners"]) # Add the fetched owners to the array
+            page_key = response["pageKey"] # Update the pageKey with the new one from the response
+          else
+            puts "No owners found or error fetching owners."
+            break
+          end
+      
+          # Break the loop if there's no pageKey in the response, indicating no more pages to fetch
+          break unless page_key
 
-    def get_owners_for_collection(contract_address)
-        endpoint = "#{BASE_URL}#{@api_key}/getOwnersForCollection"
-        params = { contractAddress: contract_address }
-        make_request(endpoint, params)
-    end
+          if ENV['RAILS_ENV'] == 'test' && owners.size >= 500
+            puts "Test environment detected. Limiting to 500 results and stopping early."
+            break
+          end
 
-    def is_holder_of_collection(owner_address, contract_address)
-        endpoint = "#{BASE_URL}#{@api_key}/isHolderOfCollection"
-        params = { owner: owner_address, contractAddress: contract_address }
-        make_request(endpoint, params)
-    end
+          sleep 0.25
+        end
+      
+        owners # Return the collected owners
+      rescue => e
+        puts "Failed to fetch all owners: #{e.message}"
+        nil
+    end      
 
-    def get_nft_metadata_batch(contract_addresses, token_ids, token_type = "erc721")
-        endpoint = "#{BASE_URL}#{@api_key}/getNFTMetadataBatch"
-        params = { contractAddresses: contract_addresses.join(','), tokenIds: token_ids.join(','), tokenType: token_type }
-        make_request(endpoint, params)
-    end
+    # VERIFIED
+    def get_owners_for_contract(contract_address, with_token_balances = false, as_of_this_block = nil)
+        owners = [] # Array to hold all fetched owners
+        endpoint = "#{BASE_URL}#{@api_key}/getOwnersForContract"
+        page_key = nil
+      
+        loop do
+          params = {
+            contractAddress: contract_address,
+            withTokenBalances: with_token_balances
+          }
+          params[:block] = as_of_this_block if as_of_this_block
+          params[:pageKey] = page_key if page_key
+      
+          response = make_request(endpoint, params)
+      
+          if response && response["owners"]
+            owners.concat(response["owners"]) # Add the fetched owners to the array
+            page_key = response["pageKey"] # Update the pageKey with the new one from the response, if present
+          else
+            puts "No owners found or error fetching owners."
+            break
+          end
+      
+          # Break the loop if there's no pageKey in the response, indicating no more pages to fetch
+          break unless page_key
+        end
+      
+        owners # Return the collected owners
+      rescue => e
+        puts "Failed to fetch all owners: #{e.message}"
+        nil
+    end      
 
-    def get_contract_metadata_batch(contract_addresses)
-        endpoint = "#{BASE_URL}#{@api_key}/getContractMetadataBatch"
-        params = { contractAddresses: contract_addresses.join(',') }
-        make_request(endpoint, params)
-    end
+    # def is_holder_of_collection(owner_address, contract_address)
+    #     endpoint = "#{BASE_URL}#{@api_key}/isHolderOfCollection"
+    #     params = { owner: owner_address, contractAddress: contract_address }
+    #     make_request(endpoint, params)
+    # end
 
-    def get_floor_price(contract_address)
-        endpoint = "#{BASE_URL}#{@api_key}/getFloorPrice"
-        params = { contractAddress: contract_address }
-        make_request(endpoint, params)
-    end
+    # def get_nft_metadata_batch(contract_addresses, token_ids, token_type = "erc721")
+    #     endpoint = "#{BASE_URL}#{@api_key}/getNFTMetadataBatch"
+    #     params = { contractAddresses: contract_addresses.join(','), tokenIds: token_ids.join(','), tokenType: token_type }
+    #     make_request(endpoint, params)
+    # end
 
-    def get_nft_sales(contract_address, page_size = 2)
-        endpoint = "#{BASE_URL}#{@api_key}/getNFTSales"
-        params = { contractAddress: contract_address, pageSize: page_size }
-        make_request(endpoint, params)
-    end
+    # def get_contract_metadata_batch(contract_addresses)
+    #     endpoint = "#{BASE_URL}#{@api_key}/getContractMetadataBatch"
+    #     params = { contractAddresses: contract_addresses.join(',') }
+    #     make_request(endpoint, params)
+    # end
 
-    def compute_rarity(contract_address, token_id)
-        endpoint = "#{BASE_URL}#{@api_key}/computeRarity"
-        params = { contractAddress: contract_address, tokenId: token_id }
-        make_request(endpoint, params)
-    end
+    # def get_floor_price(contract_address)
+    #     endpoint = "#{BASE_URL}#{@api_key}/getFloorPrice"
+    #     params = { contractAddress: contract_address }
+    #     make_request(endpoint, params)
+    # end
 
-    # Define other methods based on the API endpoints you want to use
+    # def get_nft_sales(contract_address, page_size = 2)
+    #     endpoint = "#{BASE_URL}#{@api_key}/getNFTSales"
+    #     params = { contractAddress: contract_address, pageSize: page_size }
+    #     make_request(endpoint, params)
+    # end
+
+    # def compute_rarity(contract_address, token_id)
+    #     endpoint = "#{BASE_URL}#{@api_key}/computeRarity"
+    #     params = { contractAddress: contract_address, tokenId: token_id }
+    #     make_request(endpoint, params)
+    # end
 
     private
 

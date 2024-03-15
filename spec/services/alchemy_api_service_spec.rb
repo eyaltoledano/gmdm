@@ -86,7 +86,7 @@ RSpec.describe AlchemyApiService do
     end
   end
 
-  describe "#summarize_nft_attributes", :current do
+  describe "#summarize_nft_attributes" do
     it "returns summarized NFT attributes for a given contract address" do
       response = service.summarize_nft_attributes(contract_address)
       expect(response).to be_present
@@ -98,6 +98,35 @@ RSpec.describe AlchemyApiService do
       puts "Found #{trait_types} trait types and #{total_unique_attributes} unique traits."
       expect(trait_types).to be > 0
       expect(total_unique_attributes).to be > 0
+    end
+  end
+
+  describe "#get_owners_for_nft" do
+    it "returns owners for a given NFT" do
+      response = service.get_owners_for_nft(contract_address, token_id)
+      expect(response).to be_present
+      expect(response.size).to be > 0
+      puts "Total owners of NFT ID ##{token_id} in the '#{collection_name}' collection: #{response.size.to_s}"
+      # puts up to 5 owners
+      puts "=== Owners ==="
+      response.first(5).each do |owner|
+        puts "- #{owner}"
+      end
+
+    end
+  end
+
+  describe "#get_owners_for_contract", :current do
+    it "returns owners for a given contract address" do
+      response = service.get_owners_for_contract(contract_address)
+      expect(response).to be_present
+      expect(response.size).to be > 0
+      puts "Total owners of NFTs in the '#{collection_name}' collection: #{response.size.to_s}"
+      # puts up to 5 owners
+      puts "=== Sample of 5 Owners ==="
+      response.first(5).each do |owner|
+        puts "- #{owner}"
+      end
     end
   end
 
