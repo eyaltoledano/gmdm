@@ -15,7 +15,6 @@ class ApplicationController < ActionController::Base
           decoded_token = JWT.decode(token, ENV['JWT_KEY'], true, { algorithm: 'HS256' }).first
           eth_address = decoded_token['sub'].downcase
           user = User.find_by(eth_address: eth_address)
-          puts "User token version for #{eth_address}: #{user.token_version}"
           if user && decoded_token['token_version'] == user.token_version
             @current_user = user
           else

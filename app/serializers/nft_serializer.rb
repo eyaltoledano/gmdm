@@ -24,5 +24,5 @@
 #  fk_rails_...  (user_id => users.id)
 #
 class NftSerializer < ActiveModel::Serializer
-  attributes :id, :token_id, :name, :image_url, :traits, :collection_id, :user_id
+  attributes :token_id, :name, :image_url, :traits, :collection_id, :user_id
 end

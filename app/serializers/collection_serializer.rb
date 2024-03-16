@@ -22,5 +22,7 @@
 #  index_collections_on_slug  (slug) UNIQUE
 #
 class CollectionSerializer < ActiveModel::Serializer
-  attributes :id, :name, :slug, :symbol, :contract_address, :active, :description, :card_image_url, :featured_image_url, :logo_url
+  attributes :name, :slug, :symbol, :contract_address, :active, :description, :card_image_url, :featured_image_url, :logo_url
+  # include the nft's
+  has_many :nfts,  if: -> { @instance_options[:include_nfts] }
 end

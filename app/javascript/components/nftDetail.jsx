@@ -11,10 +11,6 @@ const NftDetail = () => {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        console.log(params)
-    }, [params])
-
-    useEffect(() => {
         let url = '/api/v1/collections/' + collection_slug + '/' + token_id;
         Api.get(url)
             .then(response => {

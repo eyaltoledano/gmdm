@@ -25,6 +25,7 @@ gem 'dotenv-rails'
 gem 'siwe'
 gem 'jwt'
 gem 'eth'
+gem 'kaminari'
 
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'

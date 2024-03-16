@@ -1,7 +1,7 @@
 class Api::V1::CollectionsController < ApplicationController
     def index
         collections = Collection.all
-        render json: collections
+        render json: collections, include_nfts: false
     end
     
     def create
@@ -16,10 +16,31 @@ class Api::V1::CollectionsController < ApplicationController
     def show
         collection = Collection.find_by(slug: params[:slug])
         if collection
-            # render json: collection.as_json(include: :nfts)
-            render json: collection
+          # Assuming `params[:search]` is provided and sanitized for SQL queries
+          nfts = collection.nfts.where("name LIKE ?", "%#{params[:search]}%").page(params[:page]).per(25)
+    
+          # Prepare pagination URLs
+          prev_page_url = nfts.prev_page ? "#{request.base_url}/api/v1/collections/#{collection.slug}?page=#{nfts.prev_page}" : nil
+          next_page_url = nfts.next_page ? "#{request.base_url}/api/v1/collections/#{collection.slug}?page=#{nfts.next_page}" : nil
+    
+          render json: {
+            collection: CollectionSerializer.new(collection),
+            nfts: ActiveModelSerializers::SerializableResource.new(nfts, each_serializer: NftSerializer),
+            pagination: {
+              total_count: nfts.total_count,
+              total_pages: nfts.total_pages,
+              current_page: nfts.current_page,
+              next_page: nfts.next_page,
+              prev_page: nfts.prev_page,
+              first_page: nfts.first_page?,
+              last_page: nfts.last_page?,
+              out_of_range: nfts.out_of_range?,
+              prev_page_url: prev_page_url,
+              next_page_url: next_page_url
+            }
+          }, status: :ok
         else
-            render json: { error: "Collection not found" }, status: :not_found
+          render json: { error: "Collection not found" }, status: :not_found
         end
     end
     

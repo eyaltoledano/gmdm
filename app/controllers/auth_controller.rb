@@ -58,14 +58,10 @@ class AuthController < ApplicationController
 
     def logout
         token = cookies.encrypted[:auth_token]
-        puts "Logging out user with token: #{token}"
         if @current_user
             user = User.find_by(eth_address: @current_user.eth_address)
-            puts "Current token_version: #{user.token_version}"
             user.token_version += 1
             if user.save
-                puts "Updated token_version: #{user.token_version}"
-                # binding.pry
                 cookies.delete(:auth_token)
                 head :no_content
             else 
@@ -104,7 +100,6 @@ class AuthController < ApplicationController
     end
     
     def generate_jwt_token(eth_address, token_version)
-        puts "Generating JWT token for #{eth_address} with token_version #{token_version}"
         payload = {
           sub: eth_address.downcase,
           iat: Time.now.to_i,
