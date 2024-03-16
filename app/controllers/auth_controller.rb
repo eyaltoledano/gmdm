@@ -51,7 +51,8 @@ class AuthController < ApplicationController
             @current_user.seen
             render json: { user: @current_user, lastSeen: @current_user.last_seen }
         else
-            render json: { user: nil, message: 'no user found' }, status: :unauthorized
+            # render nothing
+            render json: { user: nil, message: 'not logged in' }
         end
     end
 

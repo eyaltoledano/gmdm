@@ -12,6 +12,7 @@ import { Ethereum, Sepolia } from "@thirdweb-dev/chains";
 import { ThirdwebProvider, metamaskWallet, rainbowWallet, walletConnect, coinbaseWallet } from "@thirdweb-dev/react";
 import { SWRConfig } from 'swr';
 import Api from './services/api';
+import NftDetail from './components/nftDetail';
 
 const fetcher = url => Api.get(url).then(res => res.data);
 
@@ -69,9 +70,7 @@ const App = () => {
                       <Route path="/settings" element={<SettingsPage />} />
                       <Route path="/collections" element={<CollectionsPage />} />
                       <Route path="/collections/:collection_slug" element={<CollectionDetail />} />
-                      {/* 
-                        <Route path="/collections/:collection_slug/nfts/:nftId" element={<NftDetail />} /> 
-                      */}
+                      <Route path="/collections/:collection_slug/:token_id" element={<NftDetail />} /> 
                     </Routes>
                   </Layout>
                 )}

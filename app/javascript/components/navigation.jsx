@@ -35,20 +35,13 @@ const Navigation = () => {
     const onLogout = async () => {
       await logout()
       await disconnect()
-      // const response = await Api.post('/auth/logout');
-      // if (response.status === 204) { // Check if the status code is 204 No Content, indicating successful logout
-      //   console.log('Logged out successfully');
-      //   dispatch({ type: 'LOGOUT' });
-      // } else {
-      //   console.error('Logout was unsuccessful', response);
-      // }
       dispatch({ type: 'LOGOUT' });
     }
 
     return (
       <div className='container flex mx-auto'>
         <Navbar>
-          <Navbar.Start>
+          <Navbar.Start className='space-x-2'>
           { address && (
               <Dropdown>
                 <Button tag="label" color="ghost" tabIndex={0} className="lg:hidden">
@@ -73,13 +66,13 @@ const Navigation = () => {
               </Dropdown>
             )}
             <Link to={'/'} className='btn btn-primary normal-case text-xl'>gmdm</Link>
-            { state.isLoggedIn && (
+            
               <Menu horizontal className="px-2 flex items-center gap-x-2">
-                <li className='hidden lg:flex'>
-                  <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
+                <li>
+                  <Link as='Menu.Item' to={'/collections'}>Collections</Link>
                 </li>
               </Menu>
-            )}
+            
           </Navbar.Start>
           {/* <Navbar.Center className="hidden lg:flex">
             <Menu horizontal className="px-1 container gap-x-1">
@@ -101,12 +94,15 @@ const Navigation = () => {
             { state.isLoggedIn && (
               <Menu horizontal className="px-2 flex items-center gap-x-2">
                 <li className='hidden lg:flex'>
+                  <Link as='Menu.Item' to={'/inbox'}>Inbox</Link>
+                </li>
+                <li className='hidden lg:flex'>
                   <Link as='Menu.Item' to={'/settings'}>Settings</Link>
                 </li>
               </Menu>
             )}
             { state.isLoggedIn && (
-              <Button onClick={onLogout} color="primary" className="hidden lg:flex">Logout</Button>
+              <Button onClick={onLogout} color="ghost">Logout</Button>
             )}
             { !state.isLoggedIn && (
               <ConnectWallet
