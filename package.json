@@ -22,7 +22,8 @@
     "swr": "^2.2.5"
   },
   "scripts": {
-    "build": "webpack --config webpack.config.js --watch"
+    "build": "webpack --config webpack.config.js --watch",
+    "postinstall": "npm run build"
   },
   "devDependencies": {
     "@babel/core": "^7.23.9",

@@ -81,6 +81,7 @@ test:
 #
 production:
   <<: *default
-  database: gmdm_production
-  username: gmdm
-  password: <%= ENV["GMDM_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>
+  # database: gmdm_production
+  # username: gmdm
+  # password: <%= ENV["GMDM_DATABASE_PASSWORD"] %>
