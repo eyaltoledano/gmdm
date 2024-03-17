@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import Api from '../services/api';
-import { Loading } from 'react-daisyui';
+import { Loading, Mask } from 'react-daisyui';
 
 const NftDetail = () => {
     const params = useParams();
@@ -20,6 +20,7 @@ const NftDetail = () => {
                     return
                 }
                 setNft(response.data)
+                console.log(response.data)
                 setLoading(false)
             })
             .catch(error => {
@@ -51,8 +52,24 @@ const NftDetail = () => {
 
     return (
         <div className="p-4 container mx-auto">
-            <div className='text-center'>
+            <div className='text-center space-y-2'>
+                <div className="flex justify-center">
+                    <img src={nft.image_url} alt={nft.name + nft.id} className='w-1/5 mask mask-squircle'/>
+                </div>
                 <h1 className='text-2xl font-semibold'>DM with {nft?.name}</h1>
+            </div>
+            <div className='flex justify-center'>
+                <div className="stats shadow">
+                    {nft?.traits.forEach(trait => {
+                        return(
+                        <div className="stat">
+                            <div className="stat-title">{trait.trait_type}</div>
+                            <div className="stat-value">{trait.value}</div>
+                            <div className="stat-desc">Jan 1st - Feb 1st</div>
+                        </div>
+                        )
+                    })}
+                </div>
             </div>
         </div>
     );
