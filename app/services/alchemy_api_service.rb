@@ -74,7 +74,7 @@ class AlchemyApiService
         
             # Break the loop if the new pageKey is nil or empty, indicating no more data
             if page_key.nil? || page_key.empty?      
-                puts "No more NFTs to fetch. Please wait, this might take awhile..."
+                puts "No more NFTs to fetch. That's done."
                 break
             end
 

@@ -1,11 +1,18 @@
-# doodles contract: 0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e
-# bayc contract: 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D
+# doodles contract: 0x8a90CAb2b38dba80c64b7734e58Ee1dB38B8992e # Added to prod
+# bayc contract: 0xBC4CA0EdA7647A8aB7C2061c2E118A18a936f13D # Added to prod
 # mayc contract: 0x60E4d786628Fea6478F785A6d7e704777c86a7c6
-# pudgy penguins contract: 0xBd3531dA5CF5857e7CfAA92426877b022e612cf8
+# pudgy penguins contract: 0xBd3531dA5CF5857e7CfAA92426877b022e612cf8 # Added to prod
 # cryptopunks contract: 0xb47e3cd837dDF8e4c57F05d70Ab865de6e193BBB
 # azuki contract: 0xED5AF388653567Af2F388E6224dC7C4b3241C544
 # moonbirds contract: 0x23581767a106ae21c074b2276D25e5C3e136a68b
 # clonex contract: 0x49cF6f5d44E70224e2E23fDcdd2C053F30aDA28B
+
+# Four steps to use collection seeder in production:
+#  heroku run rails c
+#  contract = '0xBd3531dA5CF5857e7CfAA92426877b022e612cf8'
+#  Rails.application.load_tasks
+#  Rake::Task['db:seed_collection'].invoke(contract)
+# FYI: Might need to close and reopen the console to run another contract.
 
 class CollectionSeeder
     def initialize(contract_address)
@@ -46,7 +53,7 @@ class CollectionSeeder
             }
         end
 
-        puts "✅ Found #{nfts.size} NFTs for the #{collection.name} collection. Collecting metadata, this is the part that takes a while..."
+        puts "✅ Found #{nfts.size} NFTs for the #{collection.name} collection. Collecting metadata, please wait, this may take a while..."
         metadata_batch = @alchemy_service.get_nft_metadata_batch(tokens)
         puts "🎨 NFT Metadata collected for all NFTs in the #{collection.name} collection."
         puts "🌱 Seeding NFTs for collection: #{collection.name}"
@@ -71,7 +78,8 @@ class CollectionSeeder
         puts "🏁 Closing up..."
         puts "👀 Collection: #{collection}"
         puts "🤜🤛 Seeded #{collection.nfts.count} NFTs for collection: #{collection.name}"
-        puts "🎉 Seeding completed for contract: #{@contract_address}"
+        puts "🎉 S#{@collection.name} was successfully seeded to gmdm!"
+        puts "🍟 Ding! Fries are done."
     rescue => e
         puts "⚠️ Failed to seed collection: #{e.message}"
     end
