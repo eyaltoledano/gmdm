@@ -21,7 +21,8 @@ class CollectionSeeder
         collection.name = collection_metadata['name']
         collection.symbol = collection_metadata['symbol']
         # ensure the description is properly set, it's not rn
-        collection.description = collection_metadata['description']
+        binding.pry
+        collection.description = collection_metadata['openSeaMetadata']['description']
         collection.logo_url = collection_metadata['openSeaMetadata']['imageUrl']
         collection.featured_image_url = collection_metadata['openSeaMetadata']['bannerImageUrl']
         collection.card_image_url = collection_metadata['openSeaMetadata']['bannerImageUrl']
