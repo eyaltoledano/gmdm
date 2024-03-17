@@ -1,9 +1,13 @@
-// tableSearch.js
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const TableSearch = ({ onSearch }) => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState('all');
+const TableSearch = ({ initialSearchTerm = '', initialFilter = 'all', onSearch }) => {
+  const [searchTerm, setSearchTerm] = useState(initialSearchTerm);
+  const [filter, setFilter] = useState(initialFilter);
+
+  useEffect(() => {
+    setSearchTerm(initialSearchTerm);
+    setFilter(initialFilter);
+  }, [initialSearchTerm, initialFilter]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,7 +22,7 @@ const TableSearch = ({ onSearch }) => {
             <input 
               type="text" 
               className="input input-bordered join-item search-input" 
-              placeholder="Find a token by ID" 
+              placeholder="Find a token by ID or trait" 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -26,7 +30,7 @@ const TableSearch = ({ onSearch }) => {
         </div>
         <select 
           className="select select-bordered join-item"
-          value={filter} // Use value prop instead of selected on option
+          value={filter}
           onChange={(e) => setFilter(e.target.value)}
         >
           <option value="all">All</option>
@@ -34,7 +38,6 @@ const TableSearch = ({ onSearch }) => {
           <option value="trait">Trait</option>
         </select>
         <div className="indicator">
-          <span className="indicator-item badge badge-secondary">new</span> 
           <button type="submit" className="btn join-item">Search</button>
         </div>
       </div>

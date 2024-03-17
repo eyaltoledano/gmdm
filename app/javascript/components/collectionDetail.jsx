@@ -81,7 +81,11 @@ const CollectionDetail = () => {
             </div>
 
             <div className="py-4 flex justify-center">
-                <TableSearch onSearch={handleSearch} />
+                <TableSearch 
+                    initialSearchTerm={searchParams.get('search')}
+                    initialFilter={searchParams.get('filter') || 'all'}
+                    onSearch={handleSearch} 
+                />
             </div>
             <div className="overflow-x-auto">
                 <table className="table">

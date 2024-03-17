@@ -83,15 +83,9 @@ class AuthController < ApplicationController
         if user
             user.seen
             jwt_token = generate_jwt_token(user.eth_address, user.token_version)
-            
-            # Set an HTTP-Only cookie
-            cookies.encrypted[:auth_token] = {
-                value: jwt_token,
-                httponly: true,
-                secure: Rails.env.production?, # ensure this is true in production for HTTPS
-                same_site: :strict,
-                expires: 24.hours.from_now
-            }
+            NftOwnershipService.update_user_nfts(user)
+            set_auth_cookie(jwt_token)
+            UpdateUserNftsJob.perform_later(user.id)
             
             render json: { status: "Login successful", ok: true, token: jwt_token }
         else
@@ -108,6 +102,16 @@ class AuthController < ApplicationController
           token_version: token_version
         }
         JWT.encode(payload, ENV['JWT_KEY'], 'HS256')
+    end
+
+    def set_auth_cookie(jwt_token)
+        cookies.encrypted[:auth_token] = {
+            value: jwt_token,
+            httponly: true,
+            secure: Rails.env.production?, # Ensure this is true in production for HTTPS
+            same_site: :strict,
+            expires: 24.hours.from_now
+        }
     end
 
     protected
