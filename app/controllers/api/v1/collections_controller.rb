@@ -16,8 +16,18 @@ class Api::V1::CollectionsController < ApplicationController
     def show
         collection = Collection.find_by(slug: params[:slug])
         if collection
-          # Assuming `params[:search]` is provided and sanitized for SQL queries
-          nfts = collection.nfts.where("name LIKE ?", "%#{params[:search]}%").page(params[:page]).per(25)
+          search = params[:search]
+          filter = params[:filter]
+        
+          nfts = case filter
+            when 'token_id'
+                collection.nfts.where("CAST(token_id AS TEXT) LIKE ?", "%#{search}%")
+            when 'traits'
+                collection.nfts.where("traits::text LIKE ?", "%#{search}%")
+            else
+                # Search across both token_id and traits if no specific filter is set
+                collection.nfts.where("CAST(token_id AS TEXT) LIKE ? OR traits::text LIKE ?", "%#{search}%", "%#{search}%")
+            end.page(params[:page]).per(25)
     
           # Prepare pagination URLs
           prev_page_url = nfts.prev_page ? "#{request.base_url}/api/v1/collections/#{collection.slug}?page=#{nfts.prev_page}" : nil

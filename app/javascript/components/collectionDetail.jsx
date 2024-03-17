@@ -3,6 +3,7 @@ import { Link, useParams, useSearchParams } from 'react-router-dom';
 import Api from '../services/api';
 import { Loading } from 'react-daisyui';
 import Pagination from './shared/pagination';
+import TableSearch from './shared/tableSearch';
 
 const CollectionDetail = () => {
     const { collection_slug } = useParams();
@@ -16,7 +17,9 @@ const CollectionDetail = () => {
     useEffect(() => {
         // Include the current page in the API call
         const page = searchParams.get('page') || 1;
-        const url = `/api/v1/collections/${collection_slug}?page=${page}`;
+        const search = searchParams.get('search') || '';
+        const filter = searchParams.get('filter') || 'all'; // Get the filter from searchParams
+        const url = `/api/v1/collections/${collection_slug}?page=${page}&search=${search}&filter=${filter}`;
         
         Api.get(url)
             .then(response => {
@@ -37,9 +40,9 @@ const CollectionDetail = () => {
             });
     }, [collection_slug, searchParams]);
 
-    // Pagination handler
-    const handlePageChange = (newPage) => {
-        setSearchParams({ page: newPage });
+    // Search handler
+    const handleSearch = (searchTerm, filter) => {
+        setSearchParams({ search: searchTerm, filter: filter, page: 1 });
     };
 
     if (loading) {
@@ -68,8 +71,17 @@ const CollectionDetail = () => {
                 <h1 className='text-2xl font-semibold'>DM with {collection?.name}</h1>
                 <p>Contract: {collection?.contract_address}</p>
             </div>
-            <div className='flex justify-center'>
-                <Pagination pagination={pagination} onPageChange={handlePageChange} collectionSlug={collection_slug} />
+            <div className='flex justify-center py-4'>
+                <Pagination 
+                    pagination={pagination} 
+                    collectionSlug={collection_slug}
+                    search={searchParams.get('search')}
+                    filter={searchParams.get('filter')} 
+                />
+            </div>
+
+            <div className="py-4 flex justify-center">
+                <TableSearch onSearch={handleSearch} />
             </div>
             <div className="overflow-x-auto">
                 <table className="table">
@@ -119,7 +131,12 @@ const CollectionDetail = () => {
                     </tbody> 
                 </table>
                 <div className='flex justify-center'>
-                    <Pagination pagination={pagination} onPageChange={handlePageChange} collectionSlug={collection_slug} />
+                    <Pagination 
+                        pagination={pagination} 
+                        collectionSlug={collection_slug}
+                        search={searchParams.get('search')}
+                        filter={searchParams.get('filter')} 
+                    />
                 </div>
             </div>
         </div>

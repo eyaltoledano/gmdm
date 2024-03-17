@@ -14,10 +14,15 @@ import React from 'react'
 // "next_page_url": "http://localhost:3000/api/v1/collections/doodles-official?page=3"
 // }
 
-function Pagination({ pagination, collectionSlug, onPageChange }) {
+function Pagination({ pagination, collectionSlug, search, filter }) {
     const { total_pages, current_page, next_page, prev_page } = pagination;
 
-    const urlForPage = (page) => `/collections/${collectionSlug}?page=${page}`;
+    const urlForPage = (page) => {
+        let url = `/collections/${collectionSlug}?page=${page}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (filter && filter !== 'all') url += `&filter=${encodeURIComponent(filter)}`;
+        return url;
+    };
 
     const pageButton = (page, text) => (
         <a href={urlForPage(page)} className="join-item btn">{text}</a>
