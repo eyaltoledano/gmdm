@@ -20,8 +20,6 @@ class CollectionSeeder
         collection = Collection.find_or_initialize_by(contract_address: @contract_address)
         collection.name = collection_metadata['name']
         collection.symbol = collection_metadata['symbol']
-        # ensure the description is properly set, it's not rn
-        binding.pry
         collection.description = collection_metadata['openSeaMetadata']['description']
         collection.logo_url = collection_metadata['openSeaMetadata']['imageUrl']
         collection.featured_image_url = collection_metadata['openSeaMetadata']['bannerImageUrl']
