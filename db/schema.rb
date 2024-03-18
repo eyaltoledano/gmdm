@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_03_15_194100) do
+ActiveRecord::Schema[7.0].define(version: 2024_03_18_205747) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -31,13 +31,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_15_194100) do
     t.index ["slug"], name: "index_collections_on_slug", unique: true
   end
 
-  create_table "dms", force: :cascade do |t|
+  create_table "dm_participants", force: :cascade do |t|
+    t.bigint "dm_id", null: false
     t.bigint "nft_id", null: false
-    t.string "target_nft_contract_address"
-    t.string "target_nft_token_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["nft_id"], name: "index_dms_on_nft_id"
+    t.index ["dm_id"], name: "index_dm_participants_on_dm_id"
+    t.index ["nft_id"], name: "index_dm_participants_on_nft_id"
+  end
+
+  create_table "dms", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
   end
 
   create_table "messages", force: :cascade do |t|
@@ -76,7 +81,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_03_15_194100) do
     t.index ["eth_address"], name: "index_users_on_eth_address", unique: true
   end
 
-  add_foreign_key "dms", "nfts"
+  add_foreign_key "dm_participants", "dms"
+  add_foreign_key "dm_participants", "nfts"
   add_foreign_key "messages", "dms"
   add_foreign_key "messages", "nfts", column: "sender_id"
   add_foreign_key "nfts", "collections"

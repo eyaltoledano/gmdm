@@ -26,7 +26,7 @@
 class Nft < ApplicationRecord
   belongs_to :user, optional: true
   belongs_to :collection
-  has_many :dms
-  has_many :messages, through: :dms
+  has_many :dm_participants
+  has_many :dms, through: :dm_participants
   validates :token_id, uniqueness: { scope: :collection_id, message: "Token ID must be unique within a collection" }
 end

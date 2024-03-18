@@ -101,10 +101,11 @@ RSpec.describe AlchemyApiService do
     end
   end
 
-  describe "#get_owners_for_nft" do
+  describe "#get_owners_for_nft", :current do
     it "returns owners for a given NFT" do
       response = service.get_owners_for_nft(contract_address, token_id)
       expect(response).to be_present
+      puts "response: #{response}"
       expect(response.size).to be > 0
       puts "Total owners of NFT ID ##{token_id} in the '#{collection_name}' collection: #{response.size.to_s}"
       # puts up to 5 owners
@@ -130,7 +131,7 @@ RSpec.describe AlchemyApiService do
     end
   end
 
-  describe "#get_nft_metadata_batch", :current do
+  describe "#get_nft_metadata_batch" do
     it "returns metadata for a batch of NFTs" do
       tokens = [
         {
