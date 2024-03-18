@@ -85,7 +85,7 @@ class AuthController < ApplicationController
             jwt_token = generate_jwt_token(user.eth_address, user.token_version)
             NftOwnershipService.update_user_nfts(user)
             set_auth_cookie(jwt_token)
-            UpdateUserNftsJob.perform_later(user.id)
+            # UpdateUserNftsJob.perform_later(user.id)
             
             render json: { status: "Login successful", ok: true, token: jwt_token }
         else

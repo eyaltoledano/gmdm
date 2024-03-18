@@ -11,4 +11,4 @@ const root = createRoot(rootElement);
 
 root.render(
     <App />
-);
+);import "./channels"
