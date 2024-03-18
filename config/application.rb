@@ -36,6 +36,6 @@ module Gmdm
     # Skip views, helpers and assets when generating a new resource.
     config.api_only = false
     config.public_file_server.enabled = true
-
+    config.active_job.queue_adapter = :sidekiq
   end
 end

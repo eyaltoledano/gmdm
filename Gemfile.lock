@@ -245,6 +245,8 @@ GEM
       execjs
       railties (>= 3.2)
       tilt
+    redis-client (0.21.0)
+      connection_pool
     reline (0.4.3)
       io-console (~> 0.5)
     rexml (3.2.6)
@@ -270,6 +272,11 @@ GEM
     rubyzip (2.3.2)
     scrypt (3.0.7)
       ffi-compiler (>= 1.0, < 2.0)
+    sidekiq (7.2.2)
+      concurrent-ruby (< 2)
+      connection_pool (>= 2.3.0)
+      rack (>= 2.2.4)
+      redis-client (>= 0.19.0)
     siwe (2.0.0)
       eth (~> 0.5.1)
     stringio (3.1.0)
@@ -310,6 +317,7 @@ DEPENDENCIES
   rails-erd
   react-rails
   rspec-rails
+  sidekiq
   siwe
   tzinfo-data
   webmock

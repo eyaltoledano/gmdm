@@ -26,6 +26,7 @@ gem 'siwe'
 gem 'jwt'
 gem 'eth'
 gem 'kaminari'
+gem 'sidekiq'
 
 group :development do
   gem 'annotate', git: 'https://github.com/ctran/annotate_models.git'
