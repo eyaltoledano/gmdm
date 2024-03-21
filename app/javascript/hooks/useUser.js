@@ -1,34 +1,40 @@
 import useSWR from 'swr';
-import Api from '../services/api'; 
+import Api from '../services/api';
 
-const fetcher = url => Api.get(url).then(res => res.data);
+// Adjusted fetcher function for Fetch API
+const fetcher = url => Api.get(url).then(data => data);
+
+const fetcherOptions = {
+  revalidateOnFocus: true,
+  revalidateOnMount: true,
+  revalidateIfStale: true,
+}
+
+let isLoggingOut = false;
 
 export function useUser() {
-  const { data, error, mutate } = useSWR('/auth/user', fetcher);
+  const { data, error, mutate } = useSWR('/auth/user', fetcher, fetcherOptions);
 
   const logout = async () => {
+    if (isLoggingOut) return;
+    isLoggingOut = true;
     try {
-      // Attempt to logout
-      const response = await Api.post('/auth/logout');
-      // Check for successful logout response (e.g., status 204)
-      if (response.status === 204) {
-        // Use mutate to update SWR cache, setting the user data to undefined
-        mutate(undefined, false); // The second argument false means do not revalidate
-      } else {
-        console.error('Logout failed:', response);
-        // Handle failed logout if necessary
-      }
+      await Api.post('/auth/logout');
+      isLoggingOut = false;
+      mutate(undefined, true); // True to revalidate after mutating
     } catch (error) {
+      isLoggingOut = false;
       console.error('Error during logout:', error);
-      // Handle error (e.g., network error, server error)
     }
   };
 
   return {
     user: data?.user,
-    isUserLoading: !error && !data,
-    isLoggedIn: data?.user?.isLoggedIn,
+    isUserLoading: typeof data === 'undefined' && !error,
+    isLoggedIn: !!data?.user,
+    isLoggingOut,
     isUserError: error,
     logout,
+    mutateUser: mutate
   };
 }

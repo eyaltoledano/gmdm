@@ -23,14 +23,14 @@ const CollectionDetail = () => {
         
         Api.get(url)
             .then(response => {
-                if (!response.data) {
+                if (!response) {
                     setNotFound(true);
                     setLoading(false);
                     return;
                 }
-                setCollection(response.data.collection);
-                setCollectionNfts(response.data.nfts);
-                setPagination(response.data.pagination); // Assuming your API includes pagination info in the response
+                setCollection(response.collection);
+                setCollectionNfts(response.nfts);
+                setPagination(response.pagination); // Assuming your API includes pagination info in the response
                 setLoading(false);
             })
             .catch(error => {

@@ -6,7 +6,7 @@ function Collections() {
 
   useEffect(() => {
     Api.get('/api/v1/collections')
-      .then(response => setCollections(response.data))
+      .then(response => setCollections(response))
       .catch(error => console.error('Error fetching collections:', error));
   }, []);
 

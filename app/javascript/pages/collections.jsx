@@ -12,12 +12,12 @@ function CollectionsPage() {
         let url = '/api/v1/collections/'
         Api.get(url)
             .then(response => {
-                if (response.data === null) {
+                if (response === null) {
                     setNotFound(true)
                     setLoading(false)
                     return
                 }
-                setCollection(response.data)
+                setCollection(response)
                 setLoading(false)
             })
             .catch(error => {

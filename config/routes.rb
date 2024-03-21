@@ -17,11 +17,13 @@ Rails.application.routes.draw do
     end
   end
 
-  # get '/auth/thirdweb', to: 'auth#payload'
   post '/auth/payload', to: 'auth#payload'
   post '/auth/login', to: 'auth#login'
   get '/auth/user', to: 'auth#user'
   post '/auth/logout', to: 'auth#logout'
+
+  # Serve websocket cable requests in-process
+  mount ActionCable.server => '/cable'
 
   # Catchall route for React Router
   # This sends non-API requests to your React app, allowing React Router to handle routing

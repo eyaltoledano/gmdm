@@ -10,11 +10,12 @@ import {
   useDisconnect
 } from "@thirdweb-dev/react";
 import { useUser } from '../hooks/useUser';
+import truncateEthAddress from 'truncate-eth-address';
 
 const Navigation = () => {
     const { state, dispatch } = useAppContext();
     const disconnect = useDisconnect()
-    const { user, logout, isUserLoading, isUserError, isLoggedIn } = useUser();
+    const { user, logout, mutateUser } = useUser();
     const address = useAddress();
 
     useEffect( () => {
@@ -28,14 +29,19 @@ const Navigation = () => {
       }
 
       if (address && user) {
+        if (!state.isLoggedIn) {
+          renderAlert('success', `Logged in as ${truncateEthAddress(user.eth_address)}`)
+          mutateUser()
+        }
         dispatch({ type: 'LOGIN', payload: { user: user } })
       }
-    }, [address, user])
+    }, [address, user, mutateUser])
 
     const onLogout = async () => {
       await logout()
       await disconnect()
       dispatch({ type: 'LOGOUT' });
+      renderAlert('success', 'Logged out')
     }
 
     return (
@@ -112,6 +118,9 @@ const Navigation = () => {
                 }}
                 auth={{
                   loginOptional: false,
+                  onLogin: () => {
+                    mutateUser()
+                  }
                 }}
                 connectModal={{
                   title: 'Connect Wallet',
@@ -121,10 +130,12 @@ const Navigation = () => {
                 onConnect={(wallet) => { 
                   if (wallet?.account?.address) {
                     dispatch({ type: 'SET_CONNECTED_WALLET', payload: wallet?.account?.address })
+                    renderAlert('success', 'Connected')
                   }
                 }}
                 onDisconnect={() => { 
                   dispatch({ type: 'DISCONNECT_WALLET' })
+                  renderAlert('success', 'Disconnected')
                 }}
               />
             )}

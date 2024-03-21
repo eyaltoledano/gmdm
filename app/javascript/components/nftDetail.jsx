@@ -15,12 +15,12 @@ const NftDetail = () => {
         let url = '/api/v1/collections/' + collection_slug + '/' + token_id;
         Api.get(url)
             .then(response => {
-                if (response.data === null) {
+                if (response === null) {
                     setNotFound(true)
                     setLoading(false)
                     return
                 }
-                setNft(response.data)
+                setNft(response)
                 setLoading(false)
             })
             .catch(error => {

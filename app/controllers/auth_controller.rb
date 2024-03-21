@@ -68,7 +68,7 @@ class AuthController < ApplicationController
                 render json: { message: 'could not update user token version', errors: user.errors.full_messages }, status: :unprocessable_entity
             end
         else
-            render json: { message: 'no user found to log out' }, status: :unauthorized
+            head :no_content
         end
     end
 

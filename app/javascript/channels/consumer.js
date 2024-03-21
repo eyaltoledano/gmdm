@@ -3,4 +3,6 @@
 
 import { createConsumer } from "@rails/actioncable"
 
-export default createConsumer()
+const consumer = createConsumer(process.env.REACT_APP_WS_URL); // The URL to your WebSocket server could be passed as an argument here
+
+export default consumer

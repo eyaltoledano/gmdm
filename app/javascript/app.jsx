@@ -13,6 +13,9 @@ import { ThirdwebProvider, metamaskWallet, rainbowWallet, walletConnect, coinbas
 import { SWRConfig } from 'swr';
 import Api from './services/api';
 import NftDetail from './components/nftDetail';
+import DM from './components/dm';
+import ProtectedRoute from './services/protectedRoute';
+import { Toaster } from 'react-hot-toast';
 
 const fetcher = url => Api.get(url).then(res => res.data);
 
@@ -61,13 +64,20 @@ const App = () => {
           supportedChains={[Ethereum, Sepolia]}
         >
               <AppProvider>
+                <Toaster
+                  position="top-center"
+                  reverseOrder={false}
+                />
                 {isLoading && <Loading variant='ball' size='lg' />}
                 {!isLoading && (
                   <Layout>
                     <Routes>
                       <Route path="/" element={<HomePage />} />
-                      <Route path="/inbox" element={<InboxPage />} />
-                      <Route path="/settings" element={<SettingsPage />} />
+                      <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+                      <Route path="/inbox" element={<ProtectedRoute><InboxPage /></ProtectedRoute>}>
+                        <Route path=":dm_id" element={<ProtectedRoute><DM /></ProtectedRoute>} />
+                        <Route index element={<ProtectedRoute><div>Choose a thread or create a new one</div></ProtectedRoute>} />
+                      </Route>
                       <Route path="/collections" element={<CollectionsPage />} />
                       <Route path="/collections/:collection_slug" element={<CollectionDetail />} />
                       <Route path="/collections/:collection_slug/:token_id" element={<NftDetail />} /> 
