@@ -8,6 +8,7 @@ const renderAlert = (type, message, duration = 3000, padding = '16px') => {
                         border: '1px solid #FFA3D4',
                         padding: `${padding}`,
                         color: '#FFA3D4',
+                        borderRadius: '10px',
                         zIndex: 9999,
                     },
                     iconTheme: {
@@ -22,7 +23,8 @@ const renderAlert = (type, message, duration = 3000, padding = '16px') => {
                           border: '1px solid #FFA3D4',
                           padding: '16px',
                           color: '#FFA3D4',
-                          zIndex: 9999,
+                          borderRadius: '10px',
+                          zIndex: 9998,
                       },
                       iconTheme: {
                           primary: '#FFA3D4',
@@ -31,13 +33,13 @@ const renderAlert = (type, message, duration = 3000, padding = '16px') => {
                       duration: duration,
                   });
             case 'info':
-                case 'loading':
-                  return toast.loading(message, {
+                  return toast(message, {
                       style: {
                           border: '1px solid #FFA3D4',
                           padding: '16px',
                           color: '#FFA3D4',
-                          zIndex: 9999,
+                          borderRadius: '10px',
+                          zIndex: 9992,
                       },
                       iconTheme: {
                           primary: '#FFA3D4',
@@ -45,13 +47,30 @@ const renderAlert = (type, message, duration = 3000, padding = '16px') => {
                       },
                       duration: duration,
                   });
+                case 'dark':
+                return toast(message, {
+                    style: {
+                        border: '1px solid #FFA3D4',
+                        padding: '16px',
+                        borderRadius: '10px',
+                        background: '#333',
+                        color: '#fff',
+                        zIndex: 9995,
+                    },
+                    iconTheme: {
+                        primary: '#FFA3D4',
+                        secondary: '#FFFFFF',
+                    },
+                    duration: duration,
+                });
             default:
                 return toast.success(message, {
                     style: {
                         border: '1px solid #FFA3D4',
                         padding: '16px',
                         color: '#FFA3D4',
-                        zIndex: 9999,
+                        borderRadius: '10px',
+                        zIndex: 9990,
                     },
                     iconTheme: {
                         primary: '#FFA3D4',

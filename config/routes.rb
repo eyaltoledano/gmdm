@@ -12,8 +12,9 @@ Rails.application.routes.draw do
         end
         resources :nfts, only: [:index, :create, :show, :update, :destroy] # nft param needs to be the nft id so we end up with /doodles/1234
       end
-      resources :dms, only: [:index, :create, :show, :update, :destroy]
-      resources :messages, only: [:index, :create, :show, :update, :destroy]
+      resources :dms, only: [:index, :create, :show, :update, :destroy] do
+        resources :messages, only: [:index, :create, :show, :update, :destroy]
+      end
     end
   end
 

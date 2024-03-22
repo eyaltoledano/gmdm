@@ -11,10 +11,11 @@ class Api::V1::DmsController < ApplicationController
 
     def show
         dm = Dm.includes(messages: { sender: :collection }).find(params[:id])
-        render json: dm, include: [:messages]
+        render json: dm, include: [:messages, :nfts]
     end      
 
     def create
+        binding.pry
         dm = Dm.new(dm_params)
         if dm.save
             render json: dm

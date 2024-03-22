@@ -10,6 +10,12 @@ class Api::V1::MessagesController < ApplicationController
     def create
         # Assuming the front end sends the ID of the NFT sending the message
         sender_nft = current_user.nfts.find(params[:sender_nft_id])
+
+        # Check if the NFT is already a participant
+        unless @dm.nfts.include?(sender_nft)
+          # Add the NFT as a participant of the DM
+          @dm.nfts << sender_nft
+        end
         
         message = @dm.messages.build(message_params.merge(sender: sender_nft))
         if message.save
@@ -28,6 +34,6 @@ class Api::V1::MessagesController < ApplicationController
     end
     
     def message_params
-        params.require(:message).permit(:content)
+        params.require(:message).permit(:content, :sender_nft_id)
     end
 end  

@@ -16,8 +16,8 @@ function Layout(props) {
       </main>
       <footer>
         <div className="container mx-auto px-4">
-          <div className="py-12 text-center text-gray-400 text-sm">
-            <p>© 2024 gmdm</p>
+          <div className="py-2 text-center text-gray-400 text-sm">
+            <p>© saying gm in yours dms since 2024</p>
           </div>
         </div>
       </footer>
