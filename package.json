@@ -2,7 +2,10 @@
   "name": "gmdm",
   "private": true,
   "dependencies": {
+    "@headlessui/react": "^1.7.18",
+    "@heroicons/react": "^2.1.3",
     "@rails/actioncable": "^7.1.3-2",
+    "@tailwindcss/forms": "^0.5.7",
     "@thirdweb-dev/auth": "^4.1.35",
     "@thirdweb-dev/chains": "^0.1.76",
     "@thirdweb-dev/react": "^4.4.12",

@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   # API Routes
   namespace :api do
     namespace :v1 do
+      get '/nfts', to: 'nfts#index'
       resources :users, only: [:index, :create, :show, :update, :destroy]
       resources :collections, only: [:index, :create, :show, :update, :destroy], param: :slug do
         member do

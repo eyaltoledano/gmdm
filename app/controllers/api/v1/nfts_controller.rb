@@ -1,5 +1,16 @@
 class Api::V1::NftsController < ApplicationController
 
+    def index
+      # get the user, then get their nfts
+      return unless current_user
+      nfts = current_user.nfts
+      if nfts
+        render json: nfts
+      else
+        render json: { error: 'NFTs not found' }
+      end
+    end
+
     def show
         api = AlchemyApiService.new
         collection = Collection.find_by(slug: params[:slug])

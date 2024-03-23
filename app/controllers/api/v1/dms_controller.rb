@@ -15,13 +15,27 @@ class Api::V1::DmsController < ApplicationController
     end      
 
     def create
-        binding.pry
-        dm = Dm.new(dm_params)
-        if dm.save
-            render json: dm
-        else
-            render json: { error: dm.errors.full_messages }, status: :unprocessable_entity
+        sender_nft = current_user.nfts.find_by(id: params[:sender_nft_id])
+        receiver_nft = Nft.find_by(token_id: params[:receiver_nft_token_id])
+        
+        unless sender_nft && receiver_nft && receiver_nft.collection.contract_address == params[:receiver_nft_contract]
+            render json: { error: "Invalid NFTs provided" }, status: :unprocessable_entity and return
         end
+
+        ActiveRecord::Base.transaction do
+            dm = Dm.create!()
+            # Since we're directly associating NFTs through dm.nfts <<, we don't need to manually create DmParticipant records
+            dm.nfts << sender_nft
+            dm.nfts << receiver_nft
+            
+            # Directly use dm.messages.create! to build and save the first message.
+            dm.messages.create!(content: params[:content], sender_id: sender_nft.id)
+        end
+
+        dm = Dm.last
+        render json: dm, status: :created
+    rescue => e
+        render json: { error: e.message }, status: :unprocessable_entity
     end
 
     def update
@@ -42,7 +56,7 @@ class Api::V1::DmsController < ApplicationController
     private
 
     def dm_params
-        params.require(:dm).permit(:name, :nft_ids => [])
+        params.require(:dm).permit(:content, :sender_nft_id, :receiver_nft_contract, :receiver_nft_token_id)
     end
 
     def serialization_scope

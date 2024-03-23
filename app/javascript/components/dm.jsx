@@ -2,12 +2,13 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import Api from '../services/api';
 import consumer from '../channels/consumer';
-import { useUser } from '@thirdweb-dev/react';
 import renderAlert from './shared/renderAlert';
+import { useAppContext } from '../services/context';
 
 const DM = () => {
     const { dm_id } = useParams();
-    const { user } = useUser()
+    const { state } = useAppContext()
+    const { user } = state;
     const [dm, setDm] = useState(null);
     const [messages, setMessages] = useState([]);
     const [newMessage, setNewMessage] = useState({});
@@ -38,7 +39,6 @@ const DM = () => {
         fetchDmData();
 
         const subscription = consumer.subscriptions.create({ channel: "DmChannel", dm_id: dm_id }, {
-            connected() { renderAlert('info', '', 500)},
             disconnected() {},
             received(data) { 
                 console.log("Received DM:", data)
@@ -74,28 +74,31 @@ const DM = () => {
         <div className="flex flex-col h-[calc(100vh-3rem-48px)] md:h-[calc(100vh-4rem-72px)]">
             <h2 className="text-center font-bold my-4 border-b border-gray-300 p-4">{conversationName}</h2>
             <div className="flex-1 overflow-y-auto p-4">
-                <div className="space-y-2 p-3">
+                <div className="space-y-3 p-3">
+                    <div className="text-gray-400 font-light text-sm text-center">{dm.created_at_pretty_with_time.toString()}</div>
                     {messages.map((message, index) => (
-                        <div key={index} className={`flex ${message.message_type === 'received' ? 'justify-start' : 'justify-end'}`}>
-                            <div className={`flex items-center space-x-2 p-2 rounded-md ${message.message_type === 'received' ? 'bg-blue-100' : 'bg-green-100'}`}>
-                                {/* Avatar */}
-                                <div className="avatar">
-                                    <div className={`w-8 h-8 mask mask-squircle `}>
-                                        <Link to={`/collections/${message.nft_collection_slug}/${message.nft_token_id}`}>
-                                            <img 
-                                                src={message.nft_image_url} alt={`${message.nft_name}'s avatar`} 
-                                                className={message.message_type === 'received' ? 'float-left' : 'float-right'}
-                                            />
-                                        </Link>
+                        <React.Fragment key={index}>
+                            <div className={`flex ${message.message_type === 'received' ? 'justify-start' : 'justify-end'}`}>
+                                <div className={`flex items-center space-x-2 p-2 rounded-md ${message.message_type === 'received' ? 'bg-blue-100' : 'bg-green-100'}`}>
+                                    {/* Avatar */}
+                                    <div className="avatar">
+                                        <div className={`w-8 h-8 mask mask-squircle `}>
+                                            <Link to={`/collections/${message.nft_collection_slug}/${message.nft_token_id}`}>
+                                                <img 
+                                                    src={message.nft_image_url} alt={`${message.nft_name}'s avatar`} 
+                                                    className={message.message_type === 'received' ? 'float-left' : 'float-right'}
+                                                />
+                                            </Link>
+                                        </div>
+                                    </div>
+                                    {/* Message */}
+                                    <div className={`flex flex-col ${message.message_type === 'received' ? 'items-start' : 'items-end'}`}>
+                                        <strong>{message.nft_name}</strong>
+                                        <p>{message.content}</p>
                                     </div>
                                 </div>
-                                {/* Message */}
-                                <div className={`flex flex-col ${message.message_type === 'received' ? 'items-start' : 'items-end'}`}>
-                                    <strong>{message.nft_name}</strong>
-                                    <p>{message.content}</p>
-                                </div>
                             </div>
-                        </div>
+                        </React.Fragment>
                     ))}
                     <div ref={endOfMessagesRef}></div>
                 </div>
