@@ -193,9 +193,9 @@ const InboxPage = () => {
                   <label htmlFor="message_content" className="label">Message</label>
                   <textarea id="message_content" className="textarea textarea-bordered" placeholder="Your message..." required onChange={handleInputChange} name="content"></textarea>
                 </div>
-                <div className="modal-action">
-                  <button type="submit" className="btn">Send</button>
-                  <button className="btn" onClick={() => setModalOpen(false)}>Cancel</button>
+                <div className="modal-action flex flex-row">
+                  <button className="btn mr-auto" onClick={() => setModalOpen(false)}>Cancel</button>
+                  <button type="submit" className="btn btn-primary btn-wide">Send</button>
                 </div>
               </form>
             </div>
