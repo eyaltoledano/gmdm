@@ -247,6 +247,8 @@ GEM
       execjs
       railties (>= 3.2)
       tilt
+    redis (5.1.0)
+      redis-client (>= 0.17.0)
     redis-client (0.21.0)
       connection_pool
     reline (0.4.3)
@@ -318,6 +320,7 @@ DEPENDENCIES
   rails-env
   rails-erd
   react-rails
+  redis
   rspec-rails
   sidekiq
   siwe
