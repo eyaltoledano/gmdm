@@ -1,12 +1,5 @@
-- fix the dropdown menu on the navbar so that clicking out of it closes it
-.- siwe authentication
-.- find or create user and send to global state
-.- manage wallet state changes
-- populate collections page
-- populate individual nft page
-- populate settings page
-- create a user settings table to store settings
-- create /inbox page
-- create /inbox/:dm_id section/component
-- figure out real-time chat lol
-- 
+- populate settings
+- don't create a dm if one already exists, just add the message
+- add a way to remove a dm
+- make the new dm modal available throughout the app
+- make it possible to prefill the new dm modal with an nft (i.e. from nft profile page)

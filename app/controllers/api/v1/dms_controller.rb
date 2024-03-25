@@ -22,17 +22,18 @@ class Api::V1::DmsController < ApplicationController
             render json: { error: "Invalid NFTs provided" }, status: :unprocessable_entity and return
         end
 
-        ActiveRecord::Base.transaction do
-            dm = Dm.create!()
-            # Since we're directly associating NFTs through dm.nfts <<, we don't need to manually create DmParticipant records
-            dm.nfts << sender_nft
-            dm.nfts << receiver_nft
-            
-            # Directly use dm.messages.create! to build and save the first message.
-            dm.messages.create!(content: params[:content], sender_id: sender_nft.id)
+        dm = Dm.find_by(nfts: [sender_nft, receiver_nft])
+
+        if dm.nil?
+            ActiveRecord::Base.transaction do
+                dm = Dm.create!()
+                dm.nfts << sender_nft
+                dm.nfts << receiver_nft
+            end
         end
 
-        dm = Dm.last
+        dm.messages.create!(content: params[:content], sender_id: sender_nft.id)
+
         render json: dm, status: :created
     rescue => e
         render json: { error: e.message }, status: :unprocessable_entity

@@ -39,7 +39,11 @@ const DM = () => {
         fetchDmData();
 
         const subscription = consumer.subscriptions.create({ channel: "DmChannel", dm_id: dm_id }, {
-            disconnected() {},
+            disconnected() {
+                setTimeout(() => {
+                    consumer.connect();
+                  }, 10000); // Reconnect after 10 seconds
+            },
             received(data) { 
                 console.log("Received DM:", data)
                 setMessages(prevMessages => [...prevMessages, data]) 

@@ -7,6 +7,9 @@ consumer.subscriptions.create("DmChannel", {
 
   disconnected() {
     console.log("Disconnected from the channel in dm_channel.js");
+    setTimeout(() => {
+      consumer.connect();
+    }, 10000); // Reconnect after 10 seconds
   },
 
   received(data) {

@@ -37,7 +37,9 @@ Rails.application.configure do
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
   # config.action_cable.url = "wss://example.com/cable"
-  # config.action_cable.allowed_request_origins = [ "http://example.com", /http:\/\/example.*/ ]
+  config.action_cable.allowed_request_origins = [ "http://gmdm.app", /http:\/\/gmdm.*/ , /https:\/\/gmdm.*/,
+                                                  "https://gmdm-b4990710b576.herokuapp.com", /http:\/\/gmdm.*/ , /https:\/\/gmdm.*/
+                                                ]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
